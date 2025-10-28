@@ -27,6 +27,8 @@ export default function Home() {
       const { data, error } = await supabase
         .from('posts')
         .select('*')
+        .eq('is_featured', true)
+        .order('display_order', { ascending: true })
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -112,7 +114,7 @@ export default function Home() {
               <p>暂无{activeCategory}相关内容</p>
             </div>
           ) : (
-            filteredPosts.map((post) => (
+            filteredPosts.slice(0, 4).map((post) => (
               <ServiceCard
                 key={post.id}
                 title={post.title}
