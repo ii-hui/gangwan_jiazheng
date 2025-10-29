@@ -5,6 +5,7 @@ import SEOHead from '../components/SEOHead'
 import Hero from '../components/Hero'
 import Image from 'next/image'
 import PostModal from '../components/PostModal'
+import { generateBreadcrumbSchema } from '../utils/seoData'
 
 export default function AnliPage() {
   const router = useRouter()
@@ -14,6 +15,11 @@ export default function AnliPage() {
   const [selectedPostIndex, setSelectedPostIndex] = useState(null)
 
   const categories = ['全部', '保姆', '育儿嫂', '老年护理', '医院护工']
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: '首页', url: '/' },
+    { name: '精选案例', url: '/anli' },
+  ])
 
   // 从URL读取category参数
   useEffect(() => {
@@ -86,10 +92,11 @@ export default function AnliPage() {
         description="秦皇岛港湾家政精选服务案例，真实客户体验分享，包括保姆、育儿嫂、老年护理、医院护工等成功服务案例。"
         keywords="家政案例,保姆案例,育儿嫂案例,老年护理案例,护工案例,秦皇岛家政"
         canonical="/anli"
+        schema={breadcrumbSchema}
       />
 
       <Hero
-        title="精选案例"
+        title="秦皇岛家政服务精选案例"
         subtitle="真实服务案例，见证专业品质"
       />
 

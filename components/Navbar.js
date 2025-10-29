@@ -35,6 +35,15 @@ export default function Navbar() {
           <span className="brand-text">秦皇岛港湾家政</span>
         </Link>
 
+        {/* 移动端电话按钮 */}
+        <a
+          href="tel:18533552006"
+          className="mobile-phone-btn"
+          aria-label="拨打电话18533552006"
+        >
+          📞 18533552006
+        </a>
+
         {/* 汉堡菜单按钮 */}
         <button
           className="hamburger"

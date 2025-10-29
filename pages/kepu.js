@@ -5,6 +5,7 @@ import SEOHead from '../components/SEOHead'
 import Hero from '../components/Hero'
 import Image from 'next/image'
 import PostModal from '../components/PostModal'
+import { generateBreadcrumbSchema } from '../utils/seoData'
 
 export default function KepuPage() {
   const router = useRouter()
@@ -14,6 +15,11 @@ export default function KepuPage() {
   const [selectedPostIndex, setSelectedPostIndex] = useState(null)
 
   const categories = ['全部', '保姆', '育儿嫂', '老年护理', '医院护工']
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: '首页', url: '/' },
+    { name: '科普知识', url: '/kepu' },
+  ])
 
   // 从URL读取category参数
   useEffect(() => {
@@ -86,10 +92,11 @@ export default function KepuPage() {
         description="秦皇岛港湾家政提供专业的家政服务科普知识，包括保姆、育儿嫂、老年护理、医院护工等领域的专业知识和实用技巧。"
         keywords="家政科普,保姆知识,育儿知识,老年护理知识,护工知识,秦皇岛家政"
         canonical="/kepu"
+        schema={breadcrumbSchema}
       />
 
       <Hero
-        title="科普知识"
+        title="秦皇岛家政服务科普知识"
         subtitle="专业的家政服务知识，助您做出明智选择"
       />
 

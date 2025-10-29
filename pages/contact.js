@@ -2,12 +2,39 @@ import SEOHead from '../components/SEOHead'
 import Hero from '../components/Hero'
 import ContactForm from '../components/ContactForm'
 import AdvantageGrid from '../components/AdvantageGrid'
-import { PAGE_SEO, generateBreadcrumbSchema, SITE_INFO } from '../utils/seoData'
+import { PAGE_SEO, generateBreadcrumbSchema, generateFAQSchema, SITE_INFO } from '../utils/seoData'
 
 export default function ContactPage() {
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: '首页', url: '/' },
     { name: '联系我们', url: '/contact' },
+  ])
+
+  const faqSchema = generateFAQSchema([
+    {
+      question: '如何预约家政服务？',
+      answer: `您可以通过拨打我们的服务热线${SITE_INFO.phone}或填写在线表单预约。我们会在30分钟内与您联系，了解具体需求并为您推荐合适的服务人员。`
+    },
+    {
+      question: '服务人员是否经过培训？',
+      answer: '是的，我们所有服务人员都经过严格的专业培训，持有相关资格证书。包括背景审查、健康体检、技能培训和职业素养培训，确保为您提供专业、可靠的服务。'
+    },
+    {
+      question: '如果对服务不满意怎么办？',
+      answer: '如果您对服务不满意，可以随时联系我们的客服。我们承诺24小时内响应，并根据情况免费更换服务人员或提供其他解决方案，直到您满意为止。'
+    },
+    {
+      question: '服务价格是如何计算的？',
+      answer: '我们的服务价格透明公开，根据服务类型、工作内容和时长计算。保姆服务4500-6000元/月，育儿嫂5500-8000元/月，老年护理4000-7000元/月，医院护工200-350元/天。具体价格会根据实际需求调整。'
+    },
+    {
+      question: '是否提供试工期？',
+      answer: '是的，我们提供1-7天的试工期（根据服务类型不同）。试工期内您可以全面考察服务人员的工作能力和态度，满意后再签订正式合同。试工期费用按实际天数计算。'
+    },
+    {
+      question: '紧急情况下多久能安排服务人员？',
+      answer: '对于紧急需求，我们会优先安排。秦皇岛市区内通常1-2小时内可以安排服务人员到岗。如果是医院护工等紧急服务，我们会尽最大努力在最短时间内响应。'
+    }
   ])
 
   return (
@@ -17,7 +44,7 @@ export default function ContactPage() {
         description={PAGE_SEO.contact.description}
         keywords={PAGE_SEO.contact.keywords}
         canonical={PAGE_SEO.contact.canonical}
-        schema={breadcrumbSchema}
+        schema={[breadcrumbSchema, faqSchema]}
       />
 
       <Hero title="联系我们" subtitle="随时为您提供专业咨询服务" />

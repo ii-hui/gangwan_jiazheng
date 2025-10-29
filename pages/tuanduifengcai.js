@@ -5,6 +5,8 @@ import SEOHead from '../components/SEOHead'
 import Hero from '../components/Hero'
 import TeamMemberCard from '../components/TeamMemberCard'
 import TeamMemberModal from '../components/TeamMemberModal'
+import SkeletonCard from '../components/SkeletonCard'
+import { generateBreadcrumbSchema } from '../utils/seoData'
 
 export default function TuanduifengcaiPage() {
   const router = useRouter()
@@ -14,6 +16,11 @@ export default function TuanduifengcaiPage() {
   const [selectedMemberIndex, setSelectedMemberIndex] = useState(null)
 
   const categories = ['全部', '保姆', '育儿嫂', '老年护理', '医院护工']
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: '首页', url: '/' },
+    { name: '团队风采', url: '/tuanduifengcai' },
+  ])
 
   // 从URL读取category参数
   useEffect(() => {
@@ -86,10 +93,11 @@ export default function TuanduifengcaiPage() {
         description="秦皇岛港湾家政优秀团队成员展示，包括经验丰富的保姆、育儿嫂、老年护理和医院护工，查看真实照片和服务作品。"
         keywords="秦皇岛家政团队,保姆照片,育儿嫂展示,老年护理员,医院护工,家政服务人员"
         canonical="/tuanduifengcai"
+        schema={breadcrumbSchema}
       />
 
       <Hero
-        title="团队风采"
+        title="秦皇岛港湾家政团队风采"
         subtitle="经验丰富、专业培训、值得信赖"
       />
 
@@ -115,7 +123,11 @@ export default function TuanduifengcaiPage() {
 
         {/* 团队成员展示 */}
         {loading ? (
-          <div className="loading">加载中...</div>
+          <div className="team-members-grid">
+            {[...Array(8)].map((_, index) => (
+              <SkeletonCard key={index} />
+            ))}
+          </div>
         ) : members.length === 0 ? (
           <div className="empty-state">
             <p>暂无{selectedCategory === '全部' ? '' : selectedCategory}团队成员</p>

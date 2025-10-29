@@ -5,6 +5,8 @@ import SEOHead from '../components/SEOHead'
 import Hero from '../components/Hero'
 import Image from 'next/image'
 import PostModal from '../components/PostModal'
+import SkeletonCard from '../components/SkeletonCard'
+import { generateBreadcrumbSchema } from '../utils/seoData'
 
 export default function ZixunPage() {
   const router = useRouter()
@@ -14,6 +16,11 @@ export default function ZixunPage() {
   const [selectedPostIndex, setSelectedPostIndex] = useState(null)
 
   const categories = ['全部', '保姆', '育儿嫂', '老年护理', '医院护工']
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: '首页', url: '/' },
+    { name: '行业资讯', url: '/zixun' },
+  ])
 
   // 从URL读取category参数
   useEffect(() => {
@@ -86,10 +93,11 @@ export default function ZixunPage() {
         description="秦皇岛港湾家政行业资讯，家政行业最新动态、政策解读、市场趋势等专业资讯内容。"
         keywords="家政资讯,行业动态,家政政策,市场趋势,秦皇岛家政"
         canonical="/zixun"
+        schema={breadcrumbSchema}
       />
 
       <Hero
-        title="行业资讯"
+        title="秦皇岛家政行业资讯"
         subtitle="了解家政行业最新动态和趋势"
       />
 
@@ -115,7 +123,11 @@ export default function ZixunPage() {
 
         {/* 内容展示 */}
         {loading ? (
-          <div className="loading">加载中...</div>
+          <div className="posts-grid">
+            {[...Array(6)].map((_, index) => (
+              <SkeletonCard key={index} />
+            ))}
+          </div>
         ) : posts.length === 0 ? (
           <div className="empty-state">
             <p>暂无{selectedCategory === '全部' ? '' : selectedCategory}行业资讯</p>

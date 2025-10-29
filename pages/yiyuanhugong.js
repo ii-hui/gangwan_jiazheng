@@ -9,7 +9,8 @@ import {
   PAGE_SEO,
   SERVICE_CONTENT,
   generateServiceSchema,
-  generateBreadcrumbSchema
+  generateBreadcrumbSchema,
+  generateFAQSchema
 } from '../utils/seoData'
 
 export default function YiyuanhugongPage() {
@@ -27,6 +28,25 @@ export default function YiyuanhugongPage() {
     { name: '医院护工服务', url: '/yiyuanhugong' },
   ])
 
+  const faqSchema = generateFAQSchema([
+    {
+      question: '秦皇岛医院护工多少钱一天？',
+      answer: '秦皇岛医院护工服务价格根据护理类型：普通陪护180-220元/天（12小时），24小时陪护280-350元/天。专业医疗护理（ICU、术后等）350-450元/天。长期预订（7天以上）有优惠，具体价格可电话咨询。'
+    },
+    {
+      question: '医院护工主要负责什么？',
+      answer: '医院护工提供：病人日常生活照料（饮食、洗漱、翻身）、协助医疗护理（输液陪伴、用药提醒）、病房环境维护、康复训练辅助、心理安慰陪护、家属沟通协调等全方位住院陪护服务。'
+    },
+    {
+      question: '护工有医护资质吗？',
+      answer: '所有医院护工均经过：1）专业医疗护理培训 2）病患护理实操考核 3）健康证和无犯罪记录证明 4）部分护工持有护理员证、养老护理员证等资质。定期参加医院护理技能培训。'
+    },
+    {
+      question: '可以指定具体护工吗？',
+      answer: '支持指定护工服务。如果您之前使用过我们的护工并满意，可以提前预约指定。首次使用建议先沟通需求，我们根据病人情况推荐最合适的护工。不满意可随时免费更换。'
+    }
+  ])
+
   return (
     <>
       <SEOHead
@@ -34,7 +54,7 @@ export default function YiyuanhugongPage() {
         description={PAGE_SEO.yiyuanhugong.description}
         keywords={PAGE_SEO.yiyuanhugong.keywords}
         canonical={PAGE_SEO.yiyuanhugong.canonical}
-        schema={[serviceSchema, breadcrumbSchema]}
+        schema={[serviceSchema, breadcrumbSchema, faqSchema]}
       />
 
       <Hero title={service.title} subtitle={service.subtitle} />
@@ -84,6 +104,55 @@ export default function YiyuanhugongPage() {
                 <li key={index}>{step}</li>
               ))}
             </ol>
+          </section>
+
+          {/* 常见问题 */}
+          <section className="faq-section">
+            <h2>常见问题</h2>
+            <div className="faq-list">
+              <details className="faq-item">
+                <summary>秦皇岛医院护工多少钱一天？</summary>
+                <p>秦皇岛医院护工服务价格根据护理类型：普通陪护180-220元/天（12小时），24小时陪护280-350元/天。专业医疗护理（ICU、术后等）350-450元/天。长期预订（7天以上）有优惠，具体价格可电话咨询。</p>
+              </details>
+              <details className="faq-item">
+                <summary>医院护工主要负责什么？</summary>
+                <p>医院护工提供：病人日常生活照料（饮食、洗漱、翻身）、协助医疗护理（输液陪伴、用药提醒）、病房环境维护、康复训练辅助、心理安慰陪护、家属沟通协调等全方位住院陪护服务。</p>
+              </details>
+              <details className="faq-item">
+                <summary>护工有医护资质吗？</summary>
+                <p>所有医院护工均经过：1）专业医疗护理培训 2）病患护理实操考核 3）健康证和无犯罪记录证明 4）部分护工持有护理员证、养老护理员证等资质。定期参加医院护理技能培训。</p>
+              </details>
+              <details className="faq-item">
+                <summary>可以指定具体护工吗？</summary>
+                <p>支持指定护工服务。如果您之前使用过我们的护工并满意，可以提前预约指定。首次使用建议先沟通需求，我们根据病人情况推荐最合适的护工。不满意可随时免费更换。</p>
+              </details>
+            </div>
+          </section>
+
+          {/* 服务区域 */}
+          <section className="service-area-section">
+            <h2>服务覆盖区域</h2>
+            <div className="service-areas">
+              <div className="area-card">
+                <h3>海港区医院</h3>
+                <p>秦皇岛市第一医院、第三医院等</p>
+              </div>
+              <div className="area-card">
+                <h3>山海关区医院</h3>
+                <p>山海关人民医院等医疗机构</p>
+              </div>
+              <div className="area-card">
+                <h3>北戴河区医院</h3>
+                <p>北戴河医院等各级医疗机构</p>
+              </div>
+              <div className="area-card">
+                <h3>抚宁区医院</h3>
+                <p>抚宁区人民医院等</p>
+              </div>
+            </div>
+            <p style={{ textAlign: 'center', marginTop: '20px', color: '#888', fontSize: '0.95em' }}>
+              📍 秦皇岛各大医院均有合作，护工熟悉医院流程，配合治疗更高效
+            </p>
           </section>
 
           {/* 推荐团队成员 */}

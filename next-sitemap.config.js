@@ -2,7 +2,7 @@
 // 在项目根目录创建此文件
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://你的域名.com',
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://gwjz.netlify.app',
   generateRobotsTxt: true,
   robotsTxtOptions: {
     policies: [
@@ -13,7 +13,7 @@ module.exports = {
       },
     ],
     additionalSitemaps: [
-      'https://你的域名.com/sitemap.xml',
+      'https://gwjz.netlify.app/sitemap.xml',
     ],
   },
   exclude: ['/api/*', '/_next/*'],

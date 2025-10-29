@@ -9,7 +9,8 @@ import {
   PAGE_SEO,
   SERVICE_CONTENT,
   generateServiceSchema,
-  generateBreadcrumbSchema
+  generateBreadcrumbSchema,
+  generateFAQSchema
 } from '../utils/seoData'
 
 export default function LaorenghuliPage() {
@@ -27,6 +28,25 @@ export default function LaorenghuliPage() {
     { name: '老年护理服务', url: '/laorenghuli' },
   ])
 
+  const faqSchema = generateFAQSchema([
+    {
+      question: '秦皇岛老年护理多少钱一个月？',
+      answer: '秦皇岛老年护理服务价格根据护理等级不同：生活自理老人4000-5000元/月，半自理老人5000-6500元/月，完全不能自理老人6500-8000元/月。特殊疾病护理（阿尔茨海默症、帕金森等）需单独评估报价。'
+    },
+    {
+      question: '老年护理员具体做哪些工作？',
+      answer: '老年护理服务包括：日常生活照料（饮食起居、个人卫生）、健康监测（血压、血糖测量）、康复训练辅助、用药提醒、心理陪护、安全看护、营养配餐、轮椅协助等全方位专业老年照护服务。'
+    },
+    {
+      question: '护理员有专业资质吗？',
+      answer: '所有老年护理员均持有：1）养老护理员职业资格证 2）健康证明和体检报告 3）急救培训证书 4）专业技能培训证明。针对特殊疾病护理的护理员还需额外专项培训资质。'
+    },
+    {
+      question: '可以短期护理吗？',
+      answer: '支持短期护理服务。最短7天起订，适合术后恢复、家人出差等临时需求。也提供长期护理服务，签订月度或年度合同价格更优惠。提供3天试工期，不满意免费更换。'
+    }
+  ])
+
   return (
     <>
       <SEOHead
@@ -34,7 +54,7 @@ export default function LaorenghuliPage() {
         description={PAGE_SEO.laorenghuli.description}
         keywords={PAGE_SEO.laorenghuli.keywords}
         canonical={PAGE_SEO.laorenghuli.canonical}
-        schema={[serviceSchema, breadcrumbSchema]}
+        schema={[serviceSchema, breadcrumbSchema, faqSchema]}
       />
 
       <Hero title={service.title} subtitle={service.subtitle} />
@@ -84,6 +104,55 @@ export default function LaorenghuliPage() {
                 <li key={index}>{step}</li>
               ))}
             </ol>
+          </section>
+
+          {/* 常见问题 */}
+          <section className="faq-section">
+            <h2>常见问题</h2>
+            <div className="faq-list">
+              <details className="faq-item">
+                <summary>秦皇岛老年护理多少钱一个月？</summary>
+                <p>秦皇岛老年护理服务价格根据护理等级不同：生活自理老人4000-5000元/月，半自理老人5000-6500元/月，完全不能自理老人6500-8000元/月。特殊疾病护理（阿尔茨海默症、帕金森等）需单独评估报价。</p>
+              </details>
+              <details className="faq-item">
+                <summary>老年护理员具体做哪些工作？</summary>
+                <p>老年护理服务包括：日常生活照料（饮食起居、个人卫生）、健康监测（血压、血糖测量）、康复训练辅助、用药提醒、心理陪护、安全看护、营养配餐、轮椅协助等全方位专业老年照护服务。</p>
+              </details>
+              <details className="faq-item">
+                <summary>护理员有专业资质吗？</summary>
+                <p>所有老年护理员均持有：1）养老护理员职业资格证 2）健康证明和体检报告 3）急救培训证书 4）专业技能培训证明。针对特殊疾病护理的护理员还需额外专项培训资质。</p>
+              </details>
+              <details className="faq-item">
+                <summary>可以短期护理吗？</summary>
+                <p>支持短期护理服务。最短7天起订，适合术后恢复、家人出差等临时需求。也提供长期护理服务，签订月度或年度合同价格更优惠。提供3天试工期，不满意免费更换。</p>
+              </details>
+            </div>
+          </section>
+
+          {/* 服务区域 */}
+          <section className="service-area-section">
+            <h2>服务覆盖区域</h2>
+            <div className="service-areas">
+              <div className="area-card">
+                <h3>海港区</h3>
+                <p>秦皇岛市中心区域全覆盖</p>
+              </div>
+              <div className="area-card">
+                <h3>山海关区</h3>
+                <p>提供上门老年护理服务</p>
+              </div>
+              <div className="area-card">
+                <h3>北戴河区</h3>
+                <p>专业护理团队就近派遣</p>
+              </div>
+              <div className="area-card">
+                <h3>抚宁区</h3>
+                <p>覆盖抚宁城区及周边</p>
+              </div>
+            </div>
+            <p style={{ textAlign: 'center', marginTop: '20px', color: '#888', fontSize: '0.95em' }}>
+              📍 秦皇岛本地护理团队，熟悉周边医疗机构，配合就医更便利
+            </p>
           </section>
 
           {/* 推荐团队成员 */}

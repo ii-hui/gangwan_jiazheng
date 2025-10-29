@@ -7,7 +7,7 @@ export default function TeamMemberCard({ member, onClick }) {
         {member.avatar_url ? (
           <Image
             src={member.avatar_url}
-            alt={member.avatar_alt || `秦皇岛${member.category}-${member.name}`}
+            alt={member.avatar_alt || `秦皇岛${member.category}${member.name}${member.experience_years ? `-${member.experience_years}年经验` : ''}-专业家政服务`}
             width={200}
             height={200}
             className="avatar-img"

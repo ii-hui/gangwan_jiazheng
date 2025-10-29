@@ -84,7 +84,7 @@ export default function TeamMemberModal({ members, currentIndex, onClose, onNext
               {member.avatar_url ? (
                 <Image
                   src={member.avatar_url}
-                  alt={member.avatar_alt || `秦皇岛${member.category}-${member.name}`}
+                  alt={member.avatar_alt || `秦皇岛${member.category}${member.name}${member.experience_years ? `-${member.experience_years}年经验` : ''}-专业家政服务`}
                   width={150}
                   height={150}
                   className="modal-avatar-img"
@@ -134,7 +134,7 @@ export default function TeamMemberModal({ members, currentIndex, onClose, onNext
               <div className="gallery-main">
                 <Image
                   src={displayImages[currentImageIndex]}
-                  alt={displayAlts[currentImageIndex] || `${member.name}的作品${currentImageIndex + 1}`}
+                  alt={displayAlts[currentImageIndex] || `秦皇岛${member.category}${member.name}作品展示${currentImageIndex + 1}-专业家政服务案例`}
                   width={800}
                   height={600}
                   className="gallery-image"
@@ -174,7 +174,7 @@ export default function TeamMemberModal({ members, currentIndex, onClose, onNext
                     >
                       <Image
                         src={img}
-                        alt={`缩略图${index + 1}`}
+                        alt={`秦皇岛${member.category}${member.name}作品${index + 1}`}
                         width={100}
                         height={75}
                         className="thumbnail-img"

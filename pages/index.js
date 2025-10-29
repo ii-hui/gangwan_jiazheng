@@ -7,6 +7,7 @@ import ServiceCard from '../components/ServiceCard'
 import TeamMemberCard from '../components/TeamMemberCard'
 import ContactForm from '../components/ContactForm'
 import AdvantageGrid from '../components/AdvantageGrid'
+import SkeletonCard from '../components/SkeletonCard'
 import { PAGE_SEO, generateOrganizationSchema, generateBreadcrumbSchema } from '../utils/seoData'
 
 export default function Home() {
@@ -67,10 +68,6 @@ export default function Home() {
 
   const combinedSchema = [organizationSchema, breadcrumbSchema]
 
-  if (loading) {
-    return <div className="loading">加载中...</div>
-  }
-
   return (
     <>
       <SEOHead
@@ -92,7 +89,7 @@ export default function Home() {
         <div className="category-header">
           <h2>{activeCategory}服务</h2>
           <p>为您提供专业、可靠的{activeCategory}服务</p>
-          
+
           <div style={{ marginTop: '20px', display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
             {categories.map((category) => (
               <button
@@ -109,7 +106,9 @@ export default function Home() {
 
         {/* 文章列表 */}
         <main className="posts-grid">
-          {filteredPosts.length === 0 ? (
+          {loading ? (
+            [...Array(4)].map((_, index) => <SkeletonCard key={index} />)
+          ) : filteredPosts.length === 0 ? (
             <div className="empty-state">
               <p>暂无{activeCategory}相关内容</p>
             </div>
