@@ -12,7 +12,7 @@ import {
   generateBreadcrumbSchema,
   generateFAQSchema
 } from '../utils/seoData'
-import supabase from '../lib/supabaseClient'
+import { supabase } from '../lib/supabaseClient'
 
 export default function BaomuPage({ serviceItems }) {
   // 使用动态获取的服务项目，如果没有则回退到配置文件
