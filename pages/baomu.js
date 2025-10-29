@@ -12,9 +12,14 @@ import {
   generateBreadcrumbSchema,
   generateFAQSchema
 } from '../utils/seoData'
+import supabase from '../lib/supabaseClient'
 
-export default function BaomuPage() {
-  const service = SERVICE_CONTENT.baomu
+export default function BaomuPage({ serviceItems }) {
+  // 使用动态获取的服务项目，如果没有则回退到配置文件
+  const service = {
+    ...SERVICE_CONTENT.baomu,
+    services: serviceItems && serviceItems.length > 0 ? serviceItems : SERVICE_CONTENT.baomu.services
+  }
 
   const serviceSchema = generateServiceSchema(
     '秦皇岛保姆服务',
@@ -189,4 +194,51 @@ export default function BaomuPage() {
       </div>
     </>
   )
+}
+
+// 从 Supabase 获取服务项目数据（使用静态生成 + ISR）
+export async function getStaticProps() {
+  try {
+    // 查询保姆服务的所有启用项目
+    const { data, error } = await supabase
+      .from('service_items')
+      .select('*')
+      .eq('service_type', 'baomu')
+      .eq('is_active', true)
+      .order('display_order', { ascending: true })
+
+    if (error) {
+      console.error('获取服务项目失败:', error)
+      // 如果数据库查询失败，返回空数组（将使用配置文件作为回退）
+      return {
+        props: {
+          serviceItems: []
+        },
+        revalidate: 300 // 5分钟后重新验证
+      }
+    }
+
+    // 转换数据格式以匹配现有组件期望的格式
+    const serviceItems = data.map(item => ({
+      name: item.name,
+      image: item.image_url,
+      alt: item.image_alt
+    }))
+
+    return {
+      props: {
+        serviceItems
+      },
+      revalidate: 300 // 每5分钟重新生成一次页面（ISR）
+    }
+  } catch (error) {
+    console.error('获取服务项目异常:', error)
+    // 异常情况下返回空数组，使用配置文件作为回退
+    return {
+      props: {
+        serviceItems: []
+      },
+      revalidate: 300
+    }
+  }
 }

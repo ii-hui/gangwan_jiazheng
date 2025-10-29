@@ -12,9 +12,14 @@ import {
   generateBreadcrumbSchema,
   generateFAQSchema
 } from '../utils/seoData'
+import supabase from '../lib/supabaseClient'
 
-export default function YiyuanhugongPage() {
-  const service = SERVICE_CONTENT.yiyuanhugong
+export default function YiyuanhugongPage({ serviceItems }) {
+  // 使用动态获取的服务项目，如果没有则回退到配置文件
+  const service = {
+    ...SERVICE_CONTENT.yiyuanhugong,
+    services: serviceItems && serviceItems.length > 0 ? serviceItems : SERVICE_CONTENT.yiyuanhugong.services
+  }
 
   const serviceSchema = generateServiceSchema(
     '秦皇岛医院护工服务',
@@ -189,4 +194,48 @@ export default function YiyuanhugongPage() {
       </div>
     </>
   )
+}
+
+// 从 Supabase 获取服务项目数据（使用静态生成 + ISR）
+export async function getStaticProps() {
+  try {
+    // 查询医院护工服务的所有启用项目
+    const { data, error } = await supabase
+      .from('service_items')
+      .select('*')
+      .eq('service_type', 'yiyuanhugong')
+      .eq('is_active', true)
+      .order('display_order', { ascending: true })
+
+    if (error) {
+      console.error('获取服务项目失败:', error)
+      return {
+        props: {
+          serviceItems: []
+        },
+        revalidate: 300
+      }
+    }
+
+    const serviceItems = data.map(item => ({
+      name: item.name,
+      image: item.image_url,
+      alt: item.image_alt
+    }))
+
+    return {
+      props: {
+        serviceItems
+      },
+      revalidate: 300
+    }
+  } catch (error) {
+    console.error('获取服务项目异常:', error)
+    return {
+      props: {
+        serviceItems: []
+      },
+      revalidate: 300
+    }
+  }
 }
