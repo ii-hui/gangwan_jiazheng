@@ -8,7 +8,7 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'tlxczsxuubwoeigyhmou.supabase.co',
-        pathname: '/storage/v1/object/public/**',
+        pathname: '/storage/v1/object/**', // 支持 public 和 sign 两种路径
       },
     ],
     formats: ['image/avif', 'image/webp'],
