@@ -1,38 +1,11 @@
-# robots.txt for 秦皇岛港湾家政
-# https://gwjz.netlify.app
-
-# 允许所有搜索引擎爬虫访问
+# *
 User-agent: *
 Allow: /
-
-# 禁止访问的路径
-Disallow: /api/
-Disallow: /_next/
-Disallow: /admin/
-Disallow: /*.json$
-
-# 百度爬虫特殊规则（针对中国市场优化）
-User-agent: Baiduspider
-Allow: /
-Disallow: /api/
-Disallow: /_next/
-Crawl-delay: 1
-
-# 360搜索爬虫
-User-agent: 360Spider
-Allow: /
 Disallow: /api/
 Disallow: /_next/
 
-# 搜狗爬虫
-User-agent: Sogou web spider
-Allow: /
-Disallow: /api/
-Disallow: /_next/
-
-# Sitemap位置（非常重要）
-Sitemap: https://gwjz.netlify.app/sitemap.xml
-Sitemap: https://gwjz.netlify.app/sitemap-0.xml
-
-# 网站主机信息
+# Host
 Host: https://gwjz.netlify.app
+
+# Sitemaps
+Sitemap: https://gwjz.netlify.app/sitemap.xml
