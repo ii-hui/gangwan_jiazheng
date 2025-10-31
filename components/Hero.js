@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-export default function Hero({ title, subtitle, showLogo = false }) {
+export default function Hero({ title, subtitle, showLogo = false, showCTA = false }) {
   return (
     <header className="hero">
       <div className="hero-content">
@@ -17,7 +17,18 @@ export default function Hero({ title, subtitle, showLogo = false }) {
           </div>
         )}
         <h1>{title}</h1>
-        {subtitle && <p>{subtitle}</p>}
+        {subtitle && <p className="hero-subtitle">{subtitle}</p>}
+
+        {showCTA && (
+          <div className="hero-cta">
+            <a href="tel:18533552006" className="hero-cta-button">
+              📞 立即拨打 18533552006
+            </a>
+            <p className="hero-cta-features">
+              24小时在线 | 持证上岗 | 不满意免费换
+            </p>
+          </div>
+        )}
       </div>
     </header>
   )

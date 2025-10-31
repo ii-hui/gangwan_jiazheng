@@ -3,6 +3,7 @@ import Hero from '../components/Hero'
 import ContactForm from '../components/ContactForm'
 import AdvantageGrid from '../components/AdvantageGrid'
 import RecommendedTeam from '../components/RecommendedTeam'
+import RelatedServices from '../components/RelatedServices'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -185,6 +186,9 @@ export default function BaomuPage({ serviceItems }) {
               </Link>
             </div>
           </section>
+
+          {/* 相关服务推荐 */}
+          <RelatedServices currentService="保姆服务" />
         </article>
 
         <div className="contact-advantages-wrapper">
@@ -208,7 +212,7 @@ export async function getStaticProps() {
       .order('display_order', { ascending: true })
 
     if (error) {
-      console.error('获取服务项目失败:', error)
+      if (process.env.NODE_ENV === 'development') console.error('获取服务项目失败:', error)
       // 如果数据库查询失败，返回空数组（将使用配置文件作为回退）
       return {
         props: {
@@ -232,7 +236,7 @@ export async function getStaticProps() {
       revalidate: 300 // 每5分钟重新生成一次页面（ISR）
     }
   } catch (error) {
-    console.error('获取服务项目异常:', error)
+    if (process.env.NODE_ENV === 'development') console.error('获取服务项目异常:', error)
     // 异常情况下返回空数组，使用配置文件作为回退
     return {
       props: {

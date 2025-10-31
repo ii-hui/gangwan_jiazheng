@@ -53,7 +53,7 @@ export default function KepuPage() {
       if (error) throw error
       setPosts(data || [])
     } catch (error) {
-      console.error('Error fetching posts:', error)
+      if (process.env.NODE_ENV === 'development') console.error('Error fetching posts:', error)
     } finally {
       setLoading(false)
     }

@@ -2,13 +2,14 @@
 import Head from 'next/head'
 import { SITE_INFO } from '../utils/seoData'
 
-export default function SEOHead({ 
-  title, 
-  description, 
-  keywords, 
+export default function SEOHead({
+  title,
+  description,
+  keywords,
   canonical,
   ogImage,
-  schema 
+  schema,
+  noindex = false
 }) {
   const fullTitle = title || SITE_INFO.description
   const fullDescription = description || SITE_INFO.description
@@ -21,6 +22,9 @@ export default function SEOHead({
       <title>{fullTitle}</title>
       <meta name="description" content={fullDescription} />
       {keywords && <meta name="keywords" content={keywords} />}
+      <meta name="robots" content={noindex ? "noindex, nofollow" : "index, follow"} />
+      <meta name="googlebot" content={noindex ? "noindex, nofollow" : "index, follow"} />
+      <meta name="baiduspider" content={noindex ? "noindex, nofollow" : "index, follow"} />
       <link rel="canonical" href={canonicalUrl} />
       
       {/* 移动端优化 */}

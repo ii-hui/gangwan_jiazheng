@@ -25,7 +25,7 @@ export default function RecommendedTeam({ category, limit = 4 }) {
       if (error) throw error
       setMembers(data || [])
     } catch (error) {
-      console.error('Error fetching recommended team members:', error)
+      if (process.env.NODE_ENV === 'development') console.error('Error fetching recommended team members:', error)
     } finally {
       setLoading(false)
     }

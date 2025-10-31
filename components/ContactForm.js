@@ -3,10 +3,8 @@ import { supabase } from '../lib/supabaseClient'
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
-    name: '',
     phone: '',
     category: '保姆',
-    message: '',
   })
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState(null)
@@ -28,16 +26,24 @@ export default function ContactForm() {
     setLoading(true)
 
     try {
-      const { error } = await supabase.from('submissions').insert([formData])
+      const { error } = await supabase.from('submissions').insert([{
+        ...formData,
+        name: '在线咨询',
+        message: `咨询${formData.category}服务`
+      }])
 
       if (error) throw error
 
       setSubmitted(true)
-      setFormData({ name: '', phone: '', category: '保姆', message: '' })
+      setFormData({ phone: '', category: '保姆' })
 
       setTimeout(() => setSubmitted(false), 3000)
     } catch (error) {
-      setError('提交失败，请重试：' + error.message)
+      if (process.env.NODE_ENV === 'development') {
+        setError('提交失败，请重试：' + error.message)
+      } else {
+        setError('提交失败，请重试或直接拨打18533552006')
+      }
     } finally {
       setLoading(false)
     }
@@ -45,27 +51,17 @@ export default function ContactForm() {
 
   return (
     <section id="contact" className="contact-form">
-      <h2>相信我们是专业的 - 告诉我们您的需求</h2>
-      <p className="form-subtitle">我们将尽快为您安排最合适的服务人员</p>
+      <h2>快速预约 - 1分钟获取专业服务</h2>
+      <p className="form-subtitle">留下电话，我们立即为您安排最合适的服务人员</p>
 
-      {submitted && <p className="success">提交完成，我们将尽快联系您！</p>}
+      {submitted && <p className="success">提交成功！我们将在30分钟内联系您</p>}
       {error && <p className="error">{error}</p>}
 
       <form onSubmit={handleSubmit} className="form">
         <input
-          type="text"
-          name="name"
-          placeholder="您的姓名"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          aria-label="您的姓名"
-        />
-
-        <input
           type="tel"
           name="phone"
-          placeholder="您的电话"
+          placeholder="您的电话号码 *"
           value={formData.phone}
           onChange={handleChange}
           required
@@ -83,22 +79,13 @@ export default function ContactForm() {
         >
           {categories.map((cat) => (
             <option key={cat} value={cat}>
-              {cat}
+              需要{cat}服务
             </option>
           ))}
         </select>
 
-        <textarea
-          name="message"
-          placeholder="留下您的详细需求，我们将为您匹配最优质的工作人员"
-          value={formData.message}
-          onChange={handleChange}
-          rows="5"
-          aria-label="您的需求"
-        />
-
         <button type="submit" className="submit-btn" disabled={loading}>
-          {loading ? '提交中...' : '提交需求'}
+          {loading ? '提交中...' : '立即预约'}
         </button>
       </form>
     </section>

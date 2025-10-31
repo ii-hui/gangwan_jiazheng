@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default function ServiceCard({ title, description, image, imageAlt, category }) {
+export default function ServiceCard({ title, description, image, imageAlt, category, price, status }) {
   // 截断内容到150字
   const truncatedDescription = description && description.length > 150
     ? description.substring(0, 150) + '...'
@@ -20,17 +20,27 @@ export default function ServiceCard({ title, description, image, imageAlt, categ
   return (
     <article className="post-card">
       {image && (
-        <Image
-          src={image}
-          alt={imageAlt}
-          width={400}
-          height={200}
-          className="post-image"
-          loading="lazy"
-        />
+        <div style={{ position: 'relative' }}>
+          <Image
+            src={image}
+            alt={imageAlt}
+            width={400}
+            height={200}
+            className="post-image"
+            loading="lazy"
+          />
+          {status && (
+            <div className={`service-status ${status === '在岗' ? 'status-available' : 'status-waiting'}`}>
+              {status}
+            </div>
+          )}
+        </div>
       )}
       <div className="post-content">
-        <h3>{title}</h3>
+        <div className="service-card-header">
+          <h3>{title}</h3>
+          {price && <div className="service-price">{price}</div>}
+        </div>
         <p>{truncatedDescription}</p>
         <Link href={linkPath} className="read-more-btn">
           查看更多

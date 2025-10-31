@@ -297,6 +297,54 @@ body {
   transform: scale(1.05);
 }
 
+/* 服务状态标签 */
+.service-status {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.status-available {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  color: white;
+}
+
+.status-waiting {
+  background: linear-gradient(135deg, #f39c12 0%, #f1c40f 100%);
+  color: white;
+}
+
+/* 服务卡片头部（标题+价格） */
+.service-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.service-card-header h3 {
+  flex: 1;
+  margin: 0;
+}
+
+.service-price {
+  font-size: 1.2em;
+  font-weight: 700;
+  color: #d4a574;
+  white-space: nowrap;
+  padding: 4px 12px;
+  background: #fef5ef;
+  border-radius: 6px;
+  border: 2px solid #f4d4a8;
+}
+
 .post-content {
   padding: 24px;
   flex-grow: 1;
@@ -2267,3 +2315,622 @@ body {
     height: 60px;
   }
 }
+
+/* ==================== 固定拨号按钮（P0优化） ==================== */
+
+/* 移动端底部拨号按钮 */
+.mobile-sticky-call {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: white;
+  padding: 16px;
+  text-align: center;
+  font-size: 1.1em;
+  font-weight: 700;
+  text-decoration: none;
+  z-index: 999;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.mobile-sticky-call:hover {
+  background: linear-gradient(135deg, #128C7E 0%, #25D366 100%);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .mobile-sticky-call {
+    display: block;
+  }
+
+  /* 给页面底部添加padding避免内容被遮挡 */
+  main {
+    padding-bottom: 70px;
+  }
+}
+
+/* 桌面端右侧固定电话按钮 */
+.desktop-sticky-call {
+  display: none;
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, #f4d4a8 0%, #d4a574 100%);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  z-index: 999;
+  box-shadow: 0 4px 16px rgba(212, 165, 116, 0.4);
+  transition: all 0.3s ease;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+.desktop-sticky-call .phone-icon {
+  font-size: 1.5em;
+}
+
+.desktop-sticky-call .phone-text {
+  writing-mode: horizontal-tb;
+  white-space: nowrap;
+}
+
+.desktop-sticky-call:hover {
+  background: linear-gradient(135deg, #d4a574 0%, #b8906a 100%);
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 6px 20px rgba(212, 165, 116, 0.5);
+}
+
+@media (min-width: 769px) {
+  .desktop-sticky-call {
+    display: flex;
+  }
+}
+
+/* 回到顶部按钮 */
+.scroll-to-top {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #d4a574 0%, #b8906a 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 1.5em;
+  cursor: pointer;
+  z-index: 998;
+  box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scroll-to-top:hover {
+  background: linear-gradient(135deg, #b8906a 0%, #a07858 100%);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(212, 165, 116, 0.4);
+}
+
+@media (max-width: 768px) {
+  .scroll-to-top {
+    bottom: 80px;
+    right: 15px;
+    width: 45px;
+    height: 45px;
+  }
+}
+
+/* ==================== Hero区CTA优化（P0优化） ==================== */
+.hero-subtitle {
+  margin-top: 12px;
+  font-size: 1.1em;
+  color: #666;
+}
+
+.hero-cta {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-cta-button {
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: white;
+  padding: 16px 40px;
+  border-radius: 50px;
+  font-size: 1.3em;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-cta-button:hover {
+  background: linear-gradient(135deg, #128C7E 0%, #25D366 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+}
+
+.hero-cta-features {
+  font-size: 0.95em;
+  color: #d4a574;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* ==================== 社会证明横幅（P0优化） ==================== */
+.social-proof-banner {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 40px 60px;
+  background: linear-gradient(135deg, #f4d4a8 0%, #e8c9a0 100%);
+  text-align: center;
+  color: white;
+  margin-bottom: 40px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-item strong {
+  font-size: 2.5em;
+  font-weight: 800;
+  display: block;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-item span {
+  font-size: 1em;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+@media (max-width: 768px) {
+  .social-proof-banner {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 30px 20px;
+    gap: 15px;
+  }
+
+  .stat-item strong {
+    font-size: 2em;
+  }
+
+  .stat-item span {
+    font-size: 0.9em;
+  }
+
+  .hero-cta-button {
+    font-size: 1.1em;
+    padding: 14px 30px;
+  }
+}
+
+/* ==================== 家政知识库模块（P0优化） ==================== */
+.knowledge-base-section {
+  margin: 60px 0;
+  padding: 0 20px;
+}
+
+.knowledge-base-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top: 30px;
+}
+
+.knowledge-card {
+  background: white;
+  border-radius: 16px;
+  padding: 40px 30px;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 4px 16px rgba(212, 165, 116, 0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.knowledge-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(212, 165, 116, 0.25);
+}
+
+.knowledge-icon {
+  font-size: 3em;
+  margin-bottom: 8px;
+}
+
+.knowledge-card h3 {
+  font-size: 1.5em;
+  color: #d4a574;
+  margin: 0;
+}
+
+.knowledge-card p {
+  font-size: 1em;
+  color: #666;
+  margin: 0;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .knowledge-base-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .knowledge-card {
+    padding: 30px 20px;
+  }
+
+  .knowledge-icon {
+    font-size: 2.5em;
+  }
+}
+
+/* ==================== 客户评价轮播（P1-6优化） ==================== */
+.testimonials-section {
+  background: white;
+  border-radius: 16px;
+  padding: 60px 40px;
+  margin: 60px 0;
+}
+
+.testimonials-carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 900px;
+  margin: 40px auto 30px;
+  min-height: 300px;
+}
+
+.carousel-arrow {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #f4d4a8 0%, #e8c9a0 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 2em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+}
+
+.carousel-arrow:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(212, 165, 116, 0.4);
+}
+
+.carousel-arrow-left {
+  left: -60px;
+}
+
+.carousel-arrow-right {
+  right: -60px;
+}
+
+.testimonial-card {
+  background: #fef5ef;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  flex: 1;
+  animation: fadeIn 0.5s ease;
+}
+
+.testimonial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #f4d4a8;
+}
+
+.customer-info h3 {
+  font-size: 1.4em;
+  color: #333;
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.customer-location {
+  font-size: 1em;
+  color: #d4a574;
+  margin: 4px 0;
+  font-weight: 500;
+}
+
+.service-type {
+  font-size: 0.9em;
+  color: #888;
+  margin: 4px 0;
+}
+
+.rating {
+  display: flex;
+  gap: 4px;
+}
+
+.star {
+  font-size: 1.2em;
+}
+
+.testimonial-text {
+  font-size: 1.1em;
+  line-height: 1.8;
+  color: #555;
+  margin: 0 0 24px 0;
+  text-align: justify;
+}
+
+.testimonial-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #999;
+  font-size: 0.9em;
+}
+
+.testimonial-verified {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.carousel-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carousel-dot.active {
+  background: linear-gradient(135deg, #f4d4a8 0%, #e8c9a0 100%);
+  width: 32px;
+  border-radius: 6px;
+}
+
+.carousel-dot:hover {
+  background: #d4a574;
+}
+
+@media (max-width: 1024px) {
+  .testimonials-carousel {
+    padding: 0 80px;
+  }
+
+  .carousel-arrow-left {
+    left: 10px;
+  }
+
+  .carousel-arrow-right {
+    right: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .testimonials-section {
+    padding: 40px 20px;
+  }
+
+  .testimonials-carousel {
+    padding: 0 60px;
+    min-height: 350px;
+  }
+
+  .carousel-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5em;
+  }
+
+  .carousel-arrow-left {
+    left: 0;
+  }
+
+  .carousel-arrow-right {
+    right: 0;
+  }
+
+  .testimonial-card {
+    padding: 24px;
+  }
+
+  .testimonial-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .testimonial-text {
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 480px) {
+  .testimonials-carousel {
+    padding: 0 50px;
+  }
+
+  .testimonial-card {
+    padding: 20px;
+  }
+
+  .customer-info h3 {
+    font-size: 1.2em;
+  }
+
+  .testimonial-text {
+    font-size: 0.95em;
+  }
+}
+
+/* ==================== 相关服务推荐（P1-7优化） ==================== */
+.related-services-section {
+  background: #fef5ef;
+  border-radius: 16px;
+  padding: 50px 40px;
+  margin: 60px 0;
+}
+
+.related-services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  max-width: 1200px;
+  margin: 40px auto 0;
+}
+
+.related-service-card {
+  background: white;
+  border-radius: 12px;
+  padding: 32px 24px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 2px solid transparent;
+}
+
+.related-service-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(212, 165, 116, 0.2);
+  border-color: #f4d4a8;
+}
+
+.service-icon {
+  font-size: 3.5em;
+  margin-bottom: 16px;
+}
+
+.related-service-card h3 {
+  font-size: 1.4em;
+  color: #333;
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.service-desc {
+  font-size: 0.95em;
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+  flex-grow: 1;
+}
+
+.service-price-tag {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: #d4a574;
+  padding: 8px 20px;
+  background: #fef5ef;
+  border-radius: 20px;
+  border: 2px solid #f4d4a8;
+  margin-bottom: 16px;
+}
+
+.service-cta {
+  font-size: 1em;
+  font-weight: 600;
+  color: #d4a574;
+  transition: all 0.3s ease;
+}
+
+.related-service-card:hover .service-cta {
+  color: #b8906a;
+  transform: translateX(4px);
+}
+
+@media (max-width: 1024px) {
+  .related-services-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .related-services-section {
+    padding: 40px 20px;
+  }
+
+  .related-services-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .related-service-card {
+    padding: 24px 20px;
+  }
+
+  .service-icon {
+    font-size: 3em;
+  }
+}
+
+@media (max-width: 480px) {
+  .related-service-card {
+    padding: 20px 16px;
+  }
+
+  .service-icon {
+    font-size: 2.5em;
+  }
+
+  .related-service-card h3 {
+    font-size: 1.2em;
+  }
+
+  .service-desc {
+    font-size: 0.9em;
+  }
+}
+

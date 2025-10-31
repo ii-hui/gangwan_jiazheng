@@ -3,6 +3,7 @@ import Hero from '../components/Hero'
 import ContactForm from '../components/ContactForm'
 import AdvantageGrid from '../components/AdvantageGrid'
 import RecommendedTeam from '../components/RecommendedTeam'
+import RelatedServices from '../components/RelatedServices'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -185,6 +186,9 @@ export default function YiyuanhugongPage({ serviceItems }) {
               </Link>
             </div>
           </section>
+
+          {/* 相关服务推荐 */}
+          <RelatedServices currentService="医院护工" />
         </article>
 
         <div className="contact-advantages-wrapper">
@@ -208,7 +212,7 @@ export async function getStaticProps() {
       .order('display_order', { ascending: true })
 
     if (error) {
-      console.error('获取服务项目失败:', error)
+      if (process.env.NODE_ENV === 'development') console.error('获取服务项目失败:', error)
       return {
         props: {
           serviceItems: []
@@ -230,7 +234,7 @@ export async function getStaticProps() {
       revalidate: 300
     }
   } catch (error) {
-    console.error('获取服务项目异常:', error)
+    if (process.env.NODE_ENV === 'development') console.error('获取服务项目异常:', error)
     return {
       props: {
         serviceItems: []

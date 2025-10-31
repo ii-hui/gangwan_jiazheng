@@ -54,7 +54,7 @@ export default function TuanduifengcaiPage() {
       if (error) throw error
       setMembers(data || [])
     } catch (error) {
-      console.error('Error fetching team members:', error)
+      if (process.env.NODE_ENV === 'development') console.error('Error fetching team members:', error)
     } finally {
       setLoading(false)
     }

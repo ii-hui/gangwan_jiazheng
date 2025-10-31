@@ -7,6 +7,7 @@ import ServiceCard from '../components/ServiceCard'
 import TeamMemberCard from '../components/TeamMemberCard'
 import ContactForm from '../components/ContactForm'
 import AdvantageGrid from '../components/AdvantageGrid'
+import Testimonials from '../components/Testimonials'
 import SkeletonCard from '../components/SkeletonCard'
 import { PAGE_SEO, generateOrganizationSchema, generateBreadcrumbSchema } from '../utils/seoData'
 
@@ -35,7 +36,7 @@ export default function Home() {
       if (error) throw error
       setPosts(data || [])
     } catch (error) {
-      console.error('Error fetching posts:', error)
+      if (process.env.NODE_ENV === 'development') console.error('Error fetching posts:', error)
     } finally {
       setLoading(false)
     }
@@ -54,7 +55,7 @@ export default function Home() {
       if (error) throw error
       setFeaturedMembers(data || [])
     } catch (error) {
-      console.error('Error fetching featured members:', error)
+      if (process.env.NODE_ENV === 'development') console.error('Error fetching featured members:', error)
     }
   }
 
@@ -79,16 +80,37 @@ export default function Home() {
       />
 
       <Hero
-        title="专注于本地服务的高端家政"
-        subtitle="我们的联系电话是：18533552006"
+        title="秦皇岛本地家政 | 1-2小时响应 | 已服务3000+家庭"
+        subtitle="专业家政服务，让生活更轻松"
         showLogo={true}
+        showCTA={true}
       />
+
+      {/* 社会证明横幅 */}
+      <div className="social-proof-banner">
+        <div className="stat-item">
+          <strong>3000+</strong>
+          <span>秦皇岛服务家庭</span>
+        </div>
+        <div className="stat-item">
+          <strong>98%</strong>
+          <span>客户满意度</span>
+        </div>
+        <div className="stat-item">
+          <strong>1-2h</strong>
+          <span>秦皇岛快速响应</span>
+        </div>
+        <div className="stat-item">
+          <strong>24h</strong>
+          <span>在线服务</span>
+        </div>
+      </div>
 
       <div className="main-container">
         {/* 分类切换 */}
         <div className="category-header">
-          <h2>{activeCategory}服务</h2>
-          <p>为您提供专业、可靠的{activeCategory}服务</p>
+          <h2>秦皇岛{activeCategory}服务</h2>
+          <p>为秦皇岛市民提供专业、可靠的{activeCategory}服务</p>
 
           <div style={{ marginTop: '20px', display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
             {categories.map((category) => (
@@ -110,7 +132,7 @@ export default function Home() {
             [...Array(4)].map((_, index) => <SkeletonCard key={index} />)
           ) : filteredPosts.length === 0 ? (
             <div className="empty-state">
-              <p>暂无{activeCategory}相关内容</p>
+              <p>暂无秦皇岛{activeCategory}相关内容</p>
             </div>
           ) : (
             filteredPosts.slice(0, 4).map((post) => (
@@ -126,12 +148,40 @@ export default function Home() {
           )}
         </main>
 
+        {/* 家政知识库模块 */}
+        <section className="knowledge-base-section">
+          <div className="section-header">
+            <h2>秦皇岛家政百科</h2>
+            <p>专业知识 | 秦皇岛精选案例 | 秦皇岛行业资讯</p>
+          </div>
+          <div className="knowledge-base-grid">
+            <Link href="/kepu" className="knowledge-card">
+              <div className="knowledge-icon">📚</div>
+              <h3>科普知识</h3>
+              <p>专业的育儿、养老、护理知识</p>
+            </Link>
+            <Link href="/anli" className="knowledge-card">
+              <div className="knowledge-icon">⭐</div>
+              <h3>秦皇岛案例</h3>
+              <p>真实秦皇岛服务案例分享</p>
+            </Link>
+            <Link href="/zixun" className="knowledge-card">
+              <div className="knowledge-icon">📰</div>
+              <h3>行业资讯</h3>
+              <p>最新秦皇岛家政行业动态</p>
+            </Link>
+          </div>
+        </section>
+
+        {/* 客户评价轮播 */}
+        <Testimonials />
+
         {/* 团队风采预览 */}
         {featuredMembers.length > 0 && (
           <section className="team-preview-section">
             <div className="section-header">
-              <h2>我们的优秀团队</h2>
-              <p>经验丰富、专业培训、值得信赖</p>
+              <h2>秦皇岛优秀团队</h2>
+              <p>经验丰富、专业培训、秦皇岛本地值得信赖</p>
             </div>
             <div className="team-preview-grid">
               {featuredMembers.map((member) => (
