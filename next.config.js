@@ -54,9 +54,6 @@ const nextConfig = {
 
   // 压缩配置
   compress: true,
-
-  // 生产优化
-  swcMinify: true,
 }
 
 module.exports = nextConfig
