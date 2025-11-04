@@ -26,13 +26,38 @@ export default function ContactForm() {
     setLoading(true)
 
     try {
-      const { error } = await supabase.from('submissions').insert([{
+      const submissionData = {
         ...formData,
         name: '在线咨询',
+        email: 'noreply@example.com', // 占位符邮箱，因为数据库email字段不允许为空
         message: `咨询${formData.category}服务`
-      }])
+      }
+
+      // 提交到Supabase
+      const { error } = await supabase.from('submissions').insert([submissionData])
 
       if (error) throw error
+
+      // 发送企业微信通知
+      try {
+        const notifyResponse = await fetch('/api/wechat-notify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(submissionData)
+        })
+
+        const notifyResult = await notifyResponse.json()
+
+        if (!notifyResult.success) {
+          console.error('企业微信通知失败:', notifyResult)
+          // 不影响用户体验，只记录错误
+        }
+      } catch (notifyError) {
+        console.error('发送企业微信通知时出错:', notifyError)
+        // 不影响用户体验，只记录错误
+      }
 
       setSubmitted(true)
       setFormData({ phone: '', category: '保姆' })
