@@ -1,4 +1,5 @@
 import Navbar from './Navbar'
+import WeChatFloating from './WeChatFloating'
 import { useState, useEffect } from 'react'
 
 export default function Layout({ children }) {
@@ -39,6 +40,9 @@ export default function Layout({ children }) {
         <span className="phone-icon">📞</span>
         <span className="phone-text">18533552006</span>
       </a>
+
+      {/* 微信悬浮按钮 */}
+      <WeChatFloating />
 
       {/* 回到顶部按钮 */}
       {showScrollTop && (

@@ -75,8 +75,8 @@ export default function ContactPage() {
 
             <div className="contact-method">
               <h3>💬 微信咨询</h3>
-              <p className="contact-value">添加微信号</p>
-              <p className="contact-desc">扫描二维码或搜索手机号添加</p>
+              <p className="contact-value">gwjz_qhd</p>
+              <p className="contact-desc">扫描二维码或搜索微信号添加</p>
             </div>
           </div>
         </section>
