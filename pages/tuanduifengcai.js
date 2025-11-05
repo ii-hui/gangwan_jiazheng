@@ -42,7 +42,6 @@ export default function TuanduifengcaiPage() {
       let query = supabase
         .from('team_members')
         .select('*')
-        .eq('status', '在职')
         .order('display_order', { ascending: true })
 
       if (selectedCategory !== '全部') {

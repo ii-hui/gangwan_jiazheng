@@ -25,6 +25,7 @@ export default function TeamMemberCard({ member, onClick }) {
 
         <div className="team-member-meta">
           <span className="category-badge">{member.category}</span>
+          {member.status && <span className={`status-badge ${member.status === '待岗' ? 'status-available' : ''}`}>{member.status}</span>}
           {member.age && <span className="age">·{member.age}岁</span>}
           {member.experience_years && (
             <span className="experience">·{member.experience_years}年经验</span>

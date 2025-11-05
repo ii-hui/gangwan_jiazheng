@@ -47,7 +47,6 @@ export default function Home() {
       const { data, error } = await supabase
         .from('team_members')
         .select('*')
-        .eq('status', '在职')
         .eq('is_featured', true)
         .order('display_order', { ascending: true })
         .limit(6)

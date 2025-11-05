@@ -18,7 +18,6 @@ export default function RecommendedTeam({ category, limit = 4 }) {
         .from('team_members')
         .select('*')
         .eq('category', category)
-        .eq('status', '在职')
         .order('display_order', { ascending: true })
         .limit(limit)
 

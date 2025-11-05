@@ -1775,6 +1775,29 @@ body {
   font-weight: 500;
 }
 
+.status-badge {
+  background: linear-gradient(135deg, #90c695 0%, #7ab880 100%);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  font-weight: 500;
+}
+
+.status-badge.status-available {
+  background: linear-gradient(135deg, #ff9a76 0%, #ff7a59 100%);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
 .highlight {
   font-size: 0.95em;
   color: #d4a574;
