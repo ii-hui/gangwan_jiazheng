@@ -13,7 +13,7 @@ module.exports = {
       },
     ],
     additionalSitemaps: [
-      'https://gwjz.netlify.app/sitemap.xml',
+      'https://qhdgwjz.cn/sitemap.xml',
     ],
   },
   exclude: ['/api/*', '/_next/*'],
