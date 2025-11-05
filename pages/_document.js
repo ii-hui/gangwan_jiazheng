@@ -4,6 +4,9 @@ export default function Document() {
   return (
     <Html lang="zh-CN">
       <Head>
+        {/* 百度站长平台验证 */}
+        <meta name="baidu-site-verification" content="codeva-hiXeAJhHkg" />
+
         {/* 预连接到外部资源 */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
