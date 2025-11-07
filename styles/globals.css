@@ -2833,6 +2833,268 @@ body {
   }
 }
 
+/* ==================== 案例展示样式（微信聊天截图） ==================== */
+.case-studies-section .section-header h2::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #d4a574 0%, #e8c9a0 100%);
+  margin: 12px auto 0;
+  border-radius: 2px;
+}
+
+.case-carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 500px;
+  margin: 40px auto 30px;
+  min-height: 800px;
+}
+
+.case-card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  flex: 1;
+  animation: fadeIn 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.case-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f4d4a8;
+}
+
+.case-title {
+  font-size: 1.3em;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.case-badge {
+  background: linear-gradient(135deg, #d4a574 0%, #e8c9a0 100%);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 12px;
+}
+
+/* 截图轮播容器 */
+.case-screenshot-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 375px;
+  margin: 0 auto;
+}
+
+.case-screenshot {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  background: #EDEDED;
+}
+
+/* 图片轮播箭头（内层） */
+.screenshot-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  font-size: 1.8em;
+  color: #333;
+}
+
+.screenshot-arrow:hover {
+  background: white;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.screenshot-arrow-left {
+  left: 10px;
+}
+
+.screenshot-arrow-right {
+  right: 10px;
+}
+
+/* 图片指示点（内层） */
+.screenshot-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.screenshot-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d0d0d0;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.screenshot-dot.active {
+  background: #d4a574;
+  width: 24px;
+  border-radius: 4px;
+}
+
+.screenshot-dot:hover {
+  background: #b8906a;
+}
+
+.screenshot-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.case-description {
+  background: #fef5ef;
+  border-radius: 12px;
+  padding: 20px;
+  border-left: 4px solid #d4a574;
+}
+
+.case-description p {
+  font-size: 1em;
+  line-height: 1.7;
+  color: #555;
+  margin: 0;
+  text-align: justify;
+}
+
+.case-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.case-location {
+  font-size: 0.95em;
+  color: #d4a574;
+  font-weight: 500;
+}
+
+.case-verified {
+  color: #27ae60;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+.case-loading {
+  text-align: center;
+  padding: 100px 20px;
+  color: #999;
+  font-size: 1.1em;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .case-carousel {
+    max-width: 100%;
+    min-height: 700px;
+    padding: 0 60px;
+  }
+
+  .case-card {
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .case-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .case-badge {
+    margin-left: 0;
+  }
+
+  .case-title {
+    font-size: 1.1em;
+  }
+
+  .case-screenshot {
+    max-width: 100%;
+  }
+
+  .case-description {
+    padding: 16px;
+  }
+
+  .case-description p {
+    font-size: 0.95em;
+  }
+
+  .case-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .case-carousel {
+    padding: 0 50px;
+    min-height: 650px;
+  }
+
+  .case-card {
+    padding: 16px;
+  }
+
+  .case-title {
+    font-size: 1em;
+  }
+
+  .case-description p {
+    font-size: 0.9em;
+  }
+
+  .carousel-arrow {
+    width: 36px;
+    height: 36px;
+    font-size: 1.3em;
+  }
+}
+
 /* ==================== 相关服务推荐（P1-7优化） ==================== */
 .related-services-section {
   background: #fef5ef;
@@ -3118,5 +3380,195 @@ body {
   .wechat-qr-image {
     width: 200px;
     height: 200px;
+  }
+}
+
+/* ==================== 案例图片预览Modal ==================== */
+.case-image-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+  padding: 20px;
+}
+
+.case-image-modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal关闭按钮 */
+.case-modal-close {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-size: 24px;
+  color: #333;
+}
+
+.case-modal-close:hover {
+  background: white;
+  transform: rotate(90deg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Modal图片导航箭头 */
+.case-modal-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-size: 2em;
+  color: #333;
+}
+
+.case-modal-arrow:hover {
+  background: white;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.case-modal-arrow-left {
+  left: -70px;
+}
+
+.case-modal-arrow-right {
+  right: -70px;
+}
+
+/* Modal图片容器 */
+.case-modal-image-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  max-height: 85vh;
+}
+
+.case-modal-image {
+  max-width: 100%;
+  max-height: 85vh;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  object-fit: contain;
+}
+
+/* Modal图片计数器 */
+.case-modal-counter {
+  position: absolute;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal响应式设计 */
+@media (max-width: 1024px) {
+  .case-modal-arrow-left {
+    left: 10px;
+  }
+
+  .case-modal-arrow-right {
+    right: 10px;
+  }
+
+  .case-modal-close {
+    top: 10px;
+    right: 10px;
+  }
+
+  .case-modal-counter {
+    bottom: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .case-image-modal-overlay {
+    padding: 10px;
+  }
+
+  .case-modal-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 1.6em;
+  }
+
+  .case-modal-arrow-left {
+    left: 5px;
+  }
+
+  .case-modal-arrow-right {
+    right: 5px;
+  }
+
+  .case-modal-close {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  .case-modal-image {
+    max-height: 80vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .case-modal-arrow {
+    width: 36px;
+    height: 36px;
+    font-size: 1.4em;
+  }
+
+  .case-modal-close {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+
+  .case-modal-counter {
+    font-size: 12px;
+    padding: 6px 16px;
   }
 }

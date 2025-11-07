@@ -1,118 +1,383 @@
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
+import { supabase } from '../lib/supabaseClient'
 
 export default function Testimonials() {
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [currentCaseIndex, setCurrentCaseIndex] = useState(0) // 案例索引
+  const [currentImageIndex, setCurrentImageIndex] = useState(0) // 图片索引
+  const [cases, setCases] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  const testimonials = [
-    {
-      name: '刘女士',
-      location: '秦皇岛海港区',
-      service: '保姆服务',
-      rating: 5,
-      text: '港湾家政推荐的保姆阿姨特别好，在我们海港区这边工作很认真，家里打扫得特别干净，做饭也好吃。已经在我家干了半年了，非常满意！',
-      date: '2024-10'
-    },
-    {
-      name: '王先生',
-      location: '秦皇岛北戴河区',
-      service: '老年护理',
-      rating: 5,
-      text: '我父亲住在北戴河，行动不便需要专业护理。港湾家政的护理员很专业，每天按时给老人翻身、按摩，态度也特别好。作为儿女我们很放心。',
-      date: '2024-09'
-    },
-    {
-      name: '张女士',
-      location: '秦皇岛山海关区',
-      service: '育儿嫂',
-      rating: 5,
-      text: '月子期间请的育儿嫂，手法专业，对宝宝照顾得很细心。我在山海关家里，她来得很快，服务态度好，还教了我很多育儿知识。强烈推荐！',
-      date: '2024-10'
-    },
-    {
-      name: '李先生',
-      location: '秦皇岛抚宁区',
-      service: '医院护工',
-      rating: 5,
-      text: '母亲住院需要护工，港湾家政1小时就安排到位。护工很负责，在抚宁区人民医院照顾得很周到，让我们家属省心不少。价格也公道。',
-      date: '2024-08'
-    },
-    {
-      name: '赵女士',
-      location: '秦皇岛开发区',
-      service: '保姆服务',
-      rating: 5,
-      text: '我们在开发区上班比较忙，家里请了住家保姆。阿姨非常勤快，把家里收拾得井井有条，还会照顾老人和孩子。港湾家政的服务真不错！',
-      date: '2024-09'
-    }
-  ]
+  // 图片预览Modal状态
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modalImageIndex, setModalImageIndex] = useState(0)
 
+  // 从Supabase获取案例数据
   useEffect(() => {
+    fetchCases()
+  }, [])
+
+  const fetchCases = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('case_studies')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true })
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('获取案例数据失败:', error)
+        setCases(getDefaultCases())
+      } else {
+        // 处理截图数组数据
+        const processedData = (data || []).map(caseItem => {
+          // 确保 screenshots 是数组格式
+          let screenshots = []
+          if (typeof caseItem.screenshots === 'string') {
+            try {
+              screenshots = JSON.parse(caseItem.screenshots)
+            } catch (e) {
+              console.error('解析截图数据失败:', e)
+            }
+          } else if (Array.isArray(caseItem.screenshots)) {
+            screenshots = caseItem.screenshots
+          }
+
+          return {
+            ...caseItem,
+            screenshots: screenshots
+          }
+        })
+
+        setCases(processedData.length > 0 ? processedData : getDefaultCases())
+      }
+    } catch (error) {
+      console.error('获取案例数据异常:', error)
+      setCases(getDefaultCases())
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // 默认数据（当数据库为空或查询失败时使用）
+  const getDefaultCases = () => [{
+    id: '1',
+    title: '秦皇岛-海港区-找保姆-刘女士',
+    screenshots: [
+      {
+        url: '/images/placeholder-chat.jpg',
+        alt: '秦皇岛案例展示'
+      }
+    ],
+    description: '暂无案例数据，请在Supabase后台添加案例内容。',
+    service_type: '保姆',
+    location: '海港区'
+  }]
+
+  // 自动轮播案例（外层）
+  useEffect(() => {
+    if (cases.length === 0 || isModalOpen) return
+
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length)
-    }, 5000)
+      setCurrentCaseIndex((prev) => {
+        const nextIndex = (prev + 1) % cases.length
+        setCurrentImageIndex(0) // 切换案例时重置图片索引
+        return nextIndex
+      })
+    }, 8000) // 8秒切换一次案例
 
     return () => clearInterval(timer)
-  }, [testimonials.length])
+  }, [cases.length, isModalOpen])
 
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length)
+  // 自动轮播图片（内层）
+  useEffect(() => {
+    if (cases.length === 0 || isModalOpen) return
+    const currentCase = cases[currentCaseIndex]
+    if (!currentCase || !currentCase.screenshots || currentCase.screenshots.length <= 1) return
+
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % currentCase.screenshots.length)
+    }, 4000) // 4秒切换一次图片
+
+    return () => clearInterval(timer)
+  }, [cases, currentCaseIndex, isModalOpen])
+
+  // 案例导航（外层）
+  const handlePrevCase = () => {
+    setCurrentCaseIndex((prev) => {
+      const prevIndex = (prev - 1 + cases.length) % cases.length
+      setCurrentImageIndex(0)
+      return prevIndex
+    })
   }
 
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length)
+  const handleNextCase = () => {
+    setCurrentCaseIndex((prev) => {
+      const nextIndex = (prev + 1) % cases.length
+      setCurrentImageIndex(0)
+      return nextIndex
+    })
   }
 
-  const currentTestimonial = testimonials[currentIndex]
+  // 图片导航（内层）
+  const handlePrevImage = () => {
+    const currentCase = cases[currentCaseIndex]
+    if (!currentCase || !currentCase.screenshots) return
+    setCurrentImageIndex((prev) => (prev - 1 + currentCase.screenshots.length) % currentCase.screenshots.length)
+  }
+
+  const handleNextImage = () => {
+    const currentCase = cases[currentCaseIndex]
+    if (!currentCase || !currentCase.screenshots) return
+    setCurrentImageIndex((prev) => (prev + 1) % currentCase.screenshots.length)
+  }
+
+  // 打开图片预览Modal
+  const openModal = (imageIndex) => {
+    setModalImageIndex(imageIndex)
+    setIsModalOpen(true)
+    // 禁止body滚动
+    document.body.style.overflow = 'hidden'
+  }
+
+  // 关闭Modal
+  const closeModal = () => {
+    setIsModalOpen(false)
+    document.body.style.overflow = 'auto'
+  }
+
+  // Modal中的图片导航
+  const handleModalPrevImage = () => {
+    const currentCase = cases[currentCaseIndex]
+    if (!currentCase || !currentCase.screenshots) return
+    setModalImageIndex((prev) => (prev - 1 + currentCase.screenshots.length) % currentCase.screenshots.length)
+  }
+
+  const handleModalNextImage = () => {
+    const currentCase = cases[currentCaseIndex]
+    if (!currentCase || !currentCase.screenshots) return
+    setModalImageIndex((prev) => (prev + 1) % currentCase.screenshots.length)
+  }
+
+  // ESC键关闭Modal
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape' && isModalOpen) {
+        closeModal()
+      }
+    }
+    window.addEventListener('keydown', handleEsc)
+    return () => window.removeEventListener('keydown', handleEsc)
+  }, [isModalOpen])
+
+  if (loading) {
+    return (
+      <section className="testimonials-section">
+        <div className="section-header">
+          <h2>秦皇岛真实案例</h2>
+          <p>客户聊天记录 | 真实服务见证</p>
+        </div>
+        <div className="case-loading">
+          <p>加载中...</p>
+        </div>
+      </section>
+    )
+  }
+
+  if (cases.length === 0) {
+    return null
+  }
+
+  const currentCase = cases[currentCaseIndex]
+  const currentScreenshots = currentCase.screenshots || []
+  const currentScreenshot = currentScreenshots[currentImageIndex] || currentScreenshots[0]
 
   return (
-    <section className="testimonials-section">
-      <div className="section-header">
-        <h2>秦皇岛客户评价</h2>
-        <p>真实客户反馈 | 服务口碑见证</p>
-      </div>
+    <>
+      <section className="testimonials-section case-studies-section">
+        <div className="section-header">
+          <h2>秦皇岛真实案例</h2>
+          <p>客户聊天记录 | 真实服务见证</p>
+        </div>
 
-      <div className="testimonials-carousel">
-        <button onClick={handlePrev} className="carousel-arrow carousel-arrow-left" aria-label="上一条评价">
-          ‹
-        </button>
+        <div className="testimonials-carousel case-carousel">
+          {/* 案例切换按钮（外层） */}
+          {cases.length > 1 && (
+            <>
+              <button
+                onClick={handlePrevCase}
+                className="carousel-arrow carousel-arrow-left case-arrow"
+                aria-label="上一个案例"
+              >
+                ‹
+              </button>
+              <button
+                onClick={handleNextCase}
+                className="carousel-arrow carousel-arrow-right case-arrow"
+                aria-label="下一个案例"
+              >
+                ›
+              </button>
+            </>
+          )}
 
-        <div className="testimonial-card">
-          <div className="testimonial-header">
-            <div className="customer-info">
-              <h3>{currentTestimonial.name}</h3>
-              <p className="customer-location">📍 {currentTestimonial.location}</p>
-              <p className="service-type">{currentTestimonial.service}</p>
+          <div className="case-card">
+            {/* 案例标题 */}
+            <div className="case-header">
+              <h3 className="case-title">{currentCase.title}</h3>
+              {currentCase.service_type && (
+                <span className="case-badge">{currentCase.service_type}</span>
+              )}
             </div>
-            <div className="rating">
-              {[...Array(5)].map((_, i) => (
-                <span key={i} className="star">⭐</span>
-              ))}
+
+            {/* 微信聊天截图轮播区 */}
+            <div className="case-screenshot-wrapper">
+              {/* 图片切换按钮（内层） */}
+              {currentScreenshots.length > 1 && (
+                <>
+                  <button
+                    onClick={handlePrevImage}
+                    className="screenshot-arrow screenshot-arrow-left"
+                    aria-label="上一张截图"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    onClick={handleNextImage}
+                    className="screenshot-arrow screenshot-arrow-right"
+                    aria-label="下一张截图"
+                  >
+                    ›
+                  </button>
+                </>
+              )}
+
+              <div
+                className="case-screenshot"
+                onClick={() => openModal(currentImageIndex)}
+                style={{ cursor: 'pointer' }}
+                title="点击查看大图"
+              >
+                {currentScreenshot && (
+                  <Image
+                    src={currentScreenshot.url}
+                    alt={currentScreenshot.alt || currentCase.title}
+                    width={375}
+                    height={0}
+                    style={{ width: '100%', height: 'auto' }}
+                    className="screenshot-image"
+                    loading="lazy"
+                    onError={(e) => {
+                      e.target.src = '/images/placeholder-wechat.jpg'
+                    }}
+                  />
+                )}
+              </div>
+
+              {/* 图片指示点（内层） */}
+              {currentScreenshots.length > 1 && (
+                <div className="screenshot-dots">
+                  {currentScreenshots.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`screenshot-dot ${index === currentImageIndex ? 'active' : ''}`}
+                      aria-label={`查看第${index + 1}张截图`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
 
-          <p className="testimonial-text">{currentTestimonial.text}</p>
+            {/* 案例说明 */}
+            {currentCase.description && (
+              <div className="case-description">
+                <p>{currentCase.description}</p>
+              </div>
+            )}
 
-          <div className="testimonial-footer">
-            <span className="testimonial-date">{currentTestimonial.date}</span>
-            <span className="testimonial-verified">✓ 已验证客户</span>
+            {/* 案例标签 */}
+            <div className="case-footer">
+              {currentCase.location && (
+                <span className="case-location">📍 {currentCase.location}</span>
+              )}
+              <span className="case-verified">✓ 真实案例</span>
+            </div>
           </div>
         </div>
 
-        <button onClick={handleNext} className="carousel-arrow carousel-arrow-right" aria-label="下一条评价">
-          ›
-        </button>
-      </div>
+        {/* 案例轮播指示点（外层） */}
+        {cases.length > 1 && (
+          <div className="carousel-dots">
+            {cases.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setCurrentCaseIndex(index)
+                  setCurrentImageIndex(0)
+                }}
+                className={`carousel-dot ${index === currentCaseIndex ? 'active' : ''}`}
+                aria-label={`查看第${index + 1}个案例`}
+              />
+            ))}
+          </div>
+        )}
+      </section>
 
-      <div className="carousel-dots">
-        {testimonials.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentIndex(index)}
-            className={`carousel-dot ${index === currentIndex ? 'active' : ''}`}
-            aria-label={`查看第${index + 1}条评价`}
-          />
-        ))}
-      </div>
-    </section>
+      {/* 图片预览Modal */}
+      {isModalOpen && (
+        <div className="case-image-modal-overlay" onClick={closeModal}>
+          <div className="case-image-modal-content" onClick={(e) => e.stopPropagation()}>
+            {/* 关闭按钮 */}
+            <button
+              onClick={closeModal}
+              className="case-modal-close"
+              aria-label="关闭预览"
+            >
+              ✕
+            </button>
+
+            {/* 图片导航箭头 */}
+            {currentScreenshots.length > 1 && (
+              <>
+                <button
+                  onClick={handleModalPrevImage}
+                  className="case-modal-arrow case-modal-arrow-left"
+                  aria-label="上一张"
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={handleModalNextImage}
+                  className="case-modal-arrow case-modal-arrow-right"
+                  aria-label="下一张"
+                >
+                  ›
+                </button>
+              </>
+            )}
+
+            {/* 预览图片 */}
+            <div className="case-modal-image-wrapper">
+              {currentScreenshots[modalImageIndex] && (
+                <img
+                  src={currentScreenshots[modalImageIndex].url}
+                  alt={currentScreenshots[modalImageIndex].alt || currentCase.title}
+                  className="case-modal-image"
+                />
+              )}
+            </div>
+
+            {/* 图片计数 */}
+            {currentScreenshots.length > 1 && (
+              <div className="case-modal-counter">
+                {modalImageIndex + 1} / {currentScreenshots.length}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </>
   )
 }
