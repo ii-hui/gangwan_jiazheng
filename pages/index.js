@@ -7,7 +7,6 @@ import ServiceCard from '../components/ServiceCard'
 import TeamMemberCard from '../components/TeamMemberCard'
 import ContactForm from '../components/ContactForm'
 import AdvantageGrid from '../components/AdvantageGrid'
-import Testimonials from '../components/Testimonials'
 import SkeletonCard from '../components/SkeletonCard'
 import { PAGE_SEO, generateOrganizationSchema, generateBreadcrumbSchema } from '../utils/seoData'
 
@@ -172,8 +171,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 客户评价轮播 */}
-        <Testimonials />
 
         {/* 团队风采预览 */}
         {featuredMembers.length > 0 && (

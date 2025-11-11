@@ -38,20 +38,77 @@ export default function AnliPage() {
   const fetchPosts = async () => {
     try {
       setLoading(true)
-      let query = supabase
+
+      // 查询 posts 表的案例
+      let postsQuery = supabase
         .from('posts')
         .select('*')
         .eq('content_type', '案例')
         .order('created_at', { ascending: false })
 
       if (selectedCategory !== '全部') {
-        query = query.eq('category', selectedCategory)
+        postsQuery = postsQuery.eq('category', selectedCategory)
       }
 
-      const { data, error } = await query
+      // 查询 case_studies 表的案例
+      let casesQuery = supabase
+        .from('case_studies')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true })
+        .order('created_at', { ascending: false })
 
-      if (error) throw error
-      setPosts(data || [])
+      if (selectedCategory !== '全部') {
+        casesQuery = casesQuery.eq('service_type', selectedCategory)
+      }
+
+      // 并行查询两个表
+      const [postsResult, casesResult] = await Promise.all([
+        postsQuery,
+        casesQuery
+      ])
+
+      if (postsResult.error) throw postsResult.error
+      if (casesResult.error && process.env.NODE_ENV === 'development') {
+        console.error('Error fetching case studies:', casesResult.error)
+      }
+
+      // 转换 case_studies 数据格式，统一为 posts 格式
+      const transformedCases = (casesResult.data || []).map(caseItem => {
+        // 处理 screenshots 字段
+        let screenshots = []
+        if (typeof caseItem.screenshots === 'string') {
+          try {
+            screenshots = JSON.parse(caseItem.screenshots)
+          } catch (e) {
+            console.error('解析截图数据失败:', e)
+          }
+        } else if (Array.isArray(caseItem.screenshots)) {
+          screenshots = caseItem.screenshots
+        }
+
+        // 获取第一张截图作为主图
+        const firstScreenshot = screenshots.length > 0 ? screenshots[0] : null
+
+        return {
+          id: `case_${caseItem.id}`, // 添加前缀避免ID冲突
+          title: caseItem.title,
+          content: caseItem.description || '',
+          category: caseItem.service_type || '未分类',
+          image_url: firstScreenshot ? firstScreenshot.url : null,
+          image_alt: firstScreenshot ? firstScreenshot.alt : caseItem.title,
+          created_at: caseItem.created_at,
+          source: 'case_studies', // 标记数据来源
+          location: caseItem.location,
+          screenshots: screenshots // 保留所有截图数据
+        }
+      })
+
+      // 合并两个表的数据，按创建时间排序
+      const allPosts = [...(postsResult.data || []).map(p => ({ ...p, source: 'posts' })), ...transformedCases]
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+
+      setPosts(allPosts)
     } catch (error) {
       if (process.env.NODE_ENV === 'development') console.error('Error fetching posts:', error)
     } finally {
@@ -149,9 +206,17 @@ export default function AnliPage() {
                   />
                 )}
                 <div className="post-content">
-                  <span className="post-category-tag">{post.category}</span>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
+                    <span className="post-category-tag">{post.category}</span>
+                    {post.source === 'case_studies' && post.location && (
+                      <span className="post-location-tag">📍 {post.location}</span>
+                    )}
+                  </div>
                   <h3>{post.title}</h3>
                   <p>{post.content.length > 150 ? post.content.substring(0, 150) + '...' : post.content}</p>
+                  {post.source === 'case_studies' && (
+                    <span className="case-verified-badge">✓ 真实案例</span>
+                  )}
                 </div>
               </article>
             ))}

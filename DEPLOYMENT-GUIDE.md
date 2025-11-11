@@ -47,7 +47,7 @@
 2. **Netlify 自动部署**
    - Netlify 会自动检测到代码更新
    - 等待约 2-3 分钟自动构建和部署
-   - 访问 https://gwjz.netlify.app 验证
+   - 访问 https://qhdgwjz.cn 验证
 
 #### 方式B：手动构建测试
 
