@@ -20,20 +20,20 @@
 
 ```bash
 # Supabase配置
-NEXT_PUBLIC_SUPABASE_URL=https://tlxczsxuubwoeigyhmou.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRseGN6c3h1dWJ3b2VpZ3lobW91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEwMDY4MzksImV4cCI6MjA3NjU4MjgzOX0.7QiaZ7YA4QuHqUiXvcHsj_0UFi-47BICUd1EFqyRDL4
+NEXT_PUBLIC_SUPABASE_URL=<your-supabase-project-url>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-supabase-anon-key>
 
 # Supabase Service Role Key (仅服务端使用)
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRseGN6c3h1dWJ3b2VpZ3lobW91Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MTAwNjgzOSwiZXhwIjoyMDc2NTgyODM5fQ.4sFEORgyTBR1LfVlEoebU5EnTKuOmZgjRiAnlSXWKfU
+SUPABASE_SERVICE_ROLE_KEY=<your-supabase-service-role-key>
 
 # 站点配置
-NEXT_PUBLIC_SITE_URL=https://qhdgwjz.cn
+NEXT_PUBLIC_SITE_URL=<your-site-url>
 
-# 企业微信Webhook
-WECHAT_WORK_WEBHOOK_URL=https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=e560bbc4-26cc-4ec9-a9d3-4b0802b033d6
+# 企业微信Webhook（可选）
+WECHAT_WORK_WEBHOOK_URL=<your-wechat-webhook-url>
 
 # 管理员密码
-NEXT_PUBLIC_ADMIN_PASSWORD=gwjz2025
+NEXT_PUBLIC_ADMIN_PASSWORD=<your-admin-password>
 ```
 
 ### 2. 推送代码到GitHub
@@ -54,31 +54,31 @@ git push origin main
 
 部署完成后，访问以下页面验证功能：
 
-1. **求职者列表页**: https://qhdgwjz.cn/qiuzhi
-2. **求职者上传页**: https://qhdgwjz.cn/qiuzhi/upload
-3. **管理员审核页**: https://qhdgwjz.cn/admin/review
-4. **密钥生成页**: https://qhdgwjz.cn/admin/keys
+1. **求职者列表页**: <your-site-url>/qiuzhi
+2. **求职者上传页**: <your-site-url>/qiuzhi/upload
+3. **管理员审核页**: <your-site-url>/admin/review
+4. **密钥生成页**: <your-site-url>/admin/keys
 
 ## 🔑 首次使用流程
 
 ### 管理员操作
 
-1. 访问 https://qhdgwjz.cn/admin/keys
-2. 使用密码 `gwjz2025` 登录
+1. 访问 <your-site-url>/admin/keys
+2. 使用管理员密码登录
 3. 生成上传密钥（设置有效期和使用次数）
 4. 将密钥发送给求职者
 
 ### 求职者操作
 
-1. 访问 https://qhdgwjz.cn/qiuzhi/upload
+1. 访问 <your-site-url>/qiuzhi/upload
 2. 输入管理员提供的密钥
 3. 填写个人信息并上传照片
 4. 提交后等待审核
 
 ### 管理员审核
 
-1. 访问 https://qhdgwjz.cn/admin/review
-2. 使用密码 `gwjz2025` 登录
+1. 访问 <your-site-url>/admin/review
+2. 使用管理员密码登录
 3. 查看待审核的求职者信息
 4. 点击"通过"或"拒绝"按钮
 

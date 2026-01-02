@@ -13,8 +13,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: '缺少必填字段' })
     }
 
-    // 企业微信Webhook URL
-    const webhookUrl = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=e560bbc4-26cc-4ec9-a9d3-4b0802b033d6'
+    // 企业微信Webhook URL（从环境变量读取）
+    const webhookUrl = process.env.WECHAT_WORK_WEBHOOK_URL
+
+    if (!webhookUrl) {
+      console.warn('未配置企业微信Webhook URL')
+      return res.status(200).json({ success: true, message: '通知功能未启用' })
+    }
 
     // 构造企业微信消息内容
     const content = `📞 新的客户咨询\n\n` +
