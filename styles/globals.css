@@ -755,7 +755,7 @@ body {
   gap: 40px;
   margin-top: 80px;
   animation: fadeInUp 0.8s ease-out 0.3s both;
-  align-items: start;
+  align-items: stretch;
 }
 
 /* ==================== 联系表单 ==================== */
@@ -1679,6 +1679,7 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
+  height: 100%;
 }
 
 .team-member-card::before {
@@ -2092,6 +2093,7 @@ body {
 .team-preview-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-auto-rows: 1fr;
   gap: 24px;
   margin-bottom: 32px;
 }

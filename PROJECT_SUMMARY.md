@@ -3,7 +3,7 @@
 > 项目仓库：https://github.com/ii-hui/gangwan_jiazheng.git
 > 部署平台：Netlify
 > 线上地址：https://qhdgwjz.cn
-> 最后更新：2025-01-05
+> 最后更新：2025-11-11
 
 ---
 
@@ -11,12 +11,14 @@
 
 1. [项目概述](#项目概述)
 2. [技术栈](#技术栈)
-3. [核心功能模块](#核心功能模块)
-4. [数据库设计](#数据库设计)
-5. [环境配置](#环境配置)
-6. [部署说明](#部署说明)
-7. [功能实现细节](#功能实现细节)
-8. [待开发功能](#待开发功能)
+3. [页面结构](#页面结构)
+4. [核心功能模块](#核心功能模块)
+5. [组件库](#组件库)
+6. [数据库设计](#数据库设计)
+7. [环境配置](#环境配置)
+8. [部署说明](#部署说明)
+9. [功能实现细节](#功能实现细节)
+10. [待开发功能](#待开发功能)
 
 ---
 
@@ -43,21 +45,61 @@
 ### 前端框架
 - **Next.js 14.0.4** (Pages Router)
 - **React 18.2.0**
-- **CSS** (全局样式，无CSS-in-JS)
+- **Next/Image** (图片优化，支持AVIF和WebP格式)
+- **CSS** (全局样式 `styles/globals.css`，无CSS-in-JS)
 
 ### 后端服务
-- **Supabase** (PostgreSQL数据库 + 图片存储)
-- **Next.js API Routes** (服务端API)
+- **Supabase** (@supabase/supabase-js v2.39.0)
+  - PostgreSQL数据库
+  - 图片存储 (Storage)
+- **Next.js API Routes** (`pages/api/`)
 
 ### 第三方集成
-- **企业微信Webhook** (消息推送)
-- **Netlify** (自动部署)
-- **next-sitemap** (自动生成sitemap)
+- **企业微信Webhook** (消息推送到企业微信群)
+- **Netlify** (自动部署 + CDN)
+- **next-sitemap** (v4.2.3，自动生成sitemap.xml和robots.txt)
 
-### SEO工具
-- Schema.org结构化数据
+### SEO优化
+- Schema.org结构化数据（LocalBusiness、Service、Breadcrumb、FAQ）
 - Open Graph标签
-- 自动sitemap生成
+- 自动sitemap生成（postbuild钩子）
+- 完善的meta标签配置
+- 地理位置标记（秦皇岛市）
+
+### 性能优化
+- 图片自动优化（AVIF、WebP）
+- 图片懒加载
+- 30天图片缓存
+- Gzip压缩
+- HTTP安全头（HSTS、X-Frame-Options等）
+
+---
+
+## 页面结构
+
+### 主要页面 (pages/)
+
+| 页面路径 | 文件 | 功能描述 | 数据源 |
+|---------|------|----------|--------|
+| `/` | index.js | 首页，展示服务概览和团队预览 | posts表、team_members表 |
+| `/baomu` | baomu.js | 保姆服务详情页 | 静态内容（SERVICE_CONTENT） |
+| `/yuerso` | yuerso.js | 育儿嫂服务详情页 | 静态内容（SERVICE_CONTENT） |
+| `/laorenghuli` | laorenghuli.js | 老年护理服务详情页 | 静态内容（SERVICE_CONTENT） |
+| `/yiyuanhugong` | yiyuanhugong.js | 医院护工服务详情页 | 静态内容（SERVICE_CONTENT） |
+| `/kepu` | kepu.js | 科普知识列表页，支持分类筛选 | posts表(content_type='科普') |
+| `/zixun` | zixun.js | 行业资讯列表页，支持分类筛选 | posts表(content_type='资讯') |
+| `/anli` | anli.js | 案例展示列表页，支持分类筛选 | posts表+case_studies表 |
+| `/tuanduifengcai` | tuanduifengcai.js | 团队风采展示页，支持分类筛选 | team_members表 |
+| `/price` | price.js | 价格一览表页面 | 静态内容 |
+| `/about` | about.js | 关于我们页面 | 静态内容 |
+| `/contact` | contact.js | 联系我们页面+表单 | 静态内容 |
+| `/404` | 404.js | 404错误页面 | 静态内容 |
+
+### API路由 (pages/api/)
+
+| 路由路径 | 文件 | 功能描述 |
+|---------|------|----------|
+| `/api/wechat-notify` | wechat-notify.js | 企业微信通知推送API |
 
 ---
 
@@ -165,27 +207,94 @@ import { PAGE_SEO, generateOrganizationSchema } from '../utils/seoData'
 
 ---
 
-### 5. 导航与布局系统 ✅
+### 5. 内容管理系统 ✅
 
 **文件位置**：
-- `components/Layout.js` - 全局布局
-- `components/Navbar.js` - 导航栏
+- `pages/kepu.js` - 科普知识页面
+- `pages/zixun.js` - 行业资讯页面
+- `pages/anli.js` - 案例展示页面
+- `components/PostModal.js` - 内容详情弹窗
 
-**固定元素**：
-- 顶部导航栏（固定）
-- 右侧电话按钮（桌面端）
-- 右侧微信按钮（桌面端）
-- 底部拨号按钮（移动端）
-- 回到顶部按钮
+**功能说明**：
+- 从Supabase posts表动态加载内容
+- 支持按服务类型分类筛选（全部、保姆、育儿嫂、老年护理、医院护工）
+- URL参数保持分类状态（`?category=保姆`）
+- 点击卡片打开模态框查看详情
+- 支持左右切换浏览其他内容
+- 骨架屏loading状态
+- 空状态友好提示
 
-**导航菜单**：
-- 首页 `/`
-- 保姆 `/baomu`
-- 育儿嫂 `/yuerso`
-- 老年护理 `/laorenghuli`
-- 医院护工 `/yiyuanhugong`
-- 关于我们 `/about`
-- 联系我们 `/contact`
+**案例页面特殊功能**：
+- 整合posts表和case_studies表数据
+- 显示地理位置标签
+- 显示"真实案例"认证标记
+- 支持多图展示
+
+---
+
+### 6. 团队展示系统 ✅
+
+**文件位置**：
+- `pages/tuanduifengcai.js` - 团队风采页面
+- `components/TeamMemberCard.js` - 团队成员卡片
+- `components/TeamMemberModal.js` - 成员详情弹窗
+
+**功能说明**：
+- 从Supabase team_members表动态加载数据
+- 支持按服务类型分类筛选
+- 按display_order字段排序
+- 首页展示精选成员（is_featured=true，最多6个）
+- 点击卡片查看详细信息和作品集
+- 支持左右切换浏览其他成员
+
+---
+
+### 7. 价格展示系统 ✅
+
+**文件位置**：
+- `pages/price.js` - 价格页面
+
+**功能说明**：
+- 四大服务类型价格表格（保姆、育儿嫂、老年护理、医院护工）
+- 三档服务等级（基础版、标准版、高级版）
+- 价格对比卡片
+- 常见问题FAQ
+- 优惠活动说明
+- 直接拨号和在线咨询CTA
+
+---
+
+## 组件库
+
+### 布局组件
+
+| 组件名 | 文件 | 功能描述 |
+|-------|------|----------|
+| Layout | Layout.js | 全局布局容器，包含导航栏、页脚、微信浮窗 |
+| Navbar | Navbar.js | 顶部导航栏，支持移动端菜单 |
+| Hero | Hero.js | 页面头图组件，支持显示LOGO和CTA按钮 |
+| SEOHead | SEOHead.js | SEO meta标签和结构化数据组件 |
+
+### 展示组件
+
+| 组件名 | 文件 | 功能描述 |
+|-------|------|----------|
+| ServiceCard | ServiceCard.js | 服务卡片，用于首页服务展示 |
+| TeamMemberCard | TeamMemberCard.js | 团队成员卡片 |
+| AdvantageGrid | AdvantageGrid.js | 公司优势网格展示 |
+| SkeletonCard | SkeletonCard.js | 骨架屏加载状态 |
+| RelatedServices | RelatedServices.js | 相关服务推荐 |
+| RecommendedTeam | RecommendedTeam.js | 推荐团队成员 |
+
+### 交互组件
+
+| 组件名 | 文件 | 功能描述 |
+|-------|------|----------|
+| ContactForm | ContactForm.js | 联系表单，提交到Supabase+企业微信通知 |
+| WeChatFloating | WeChatFloating.js | 微信悬浮按钮+二维码弹窗 |
+| PostModal | PostModal.js | 内容详情模态框，支持左右切换 |
+| TeamMemberModal | TeamMemberModal.js | 团队成员详情模态框，支持左右切换 |
+| Testimonials | Testimonials.js | 客户评价轮播（已移除） |
 
 ---
 
@@ -193,50 +302,112 @@ import { PAGE_SEO, generateOrganizationSchema } from '../utils/seoData'
 
 ### Supabase表结构
 
-#### 1. submissions表 - 表单提交记录
+#### 1. submissions表 - 表单提交记录 ✅
 
-| 字段名 | 类型 | 说明 | 必填 |
-|--------|------|------|------|
-| id | uuid | 主键 | ✅ |
-| created_at | timestamp | 创建时间 | ✅ |
-| name | varchar | 客户姓名 | ✅ |
-| phone | varchar | 手机号 | ✅ |
-| email | varchar | 邮箱 | ❌ |
-| category | varchar(50) | 服务类型 | ✅ |
-| message | text | 留言内容 | ❌ |
+| 字段名 | 类型 | 说明 | 必填 | 默认值 |
+|--------|------|------|------|--------|
+| id | uuid | 主键 | ✅ | gen_random_uuid() |
+| created_at | timestamp | 创建时间 | ✅ | now() |
+| name | varchar | 客户姓名 | ✅ | - |
+| phone | varchar | 手机号 | ✅ | - |
+| email | varchar | 邮箱 | ❌ | noreply@example.com |
+| category | varchar(50) | 服务类型 | ✅ | - |
+| message | text | 留言内容 | ❌ | - |
 
-**SQL创建语句**：
-```sql
--- 添加category字段
-ALTER TABLE submissions
-ADD COLUMN IF NOT EXISTS category VARCHAR(50);
+**索引**：
+- created_at (降序，用于查询最新提交)
+- category (用于按类型筛选)
 
--- email字段改为可选
-ALTER TABLE submissions
-ALTER COLUMN email DROP NOT NULL;
+---
+
+#### 2. posts表 - 内容管理 ✅
+
+| 字段名 | 类型 | 说明 | 必填 | 默认值 |
+|--------|------|------|------|--------|
+| id | uuid | 主键 | ✅ | gen_random_uuid() |
+| created_at | timestamp | 创建时间 | ✅ | now() |
+| title | varchar | 标题 | ✅ | - |
+| content | text | 内容 | ✅ | - |
+| category | varchar | 分类 | ✅ | - |
+| content_type | varchar | 内容类型 | ✅ | - |
+| image_url | varchar | 图片URL | ❌ | - |
+| image_alt | varchar | 图片alt文本 | ❌ | - |
+| is_featured | boolean | 是否精选（首页展示） | ❌ | false |
+| display_order | integer | 显示顺序 | ❌ | 0 |
+
+**内容类型枚举**：
+- `科普` - 家政知识科普
+- `资讯` - 行业资讯动态
+- `案例` - 服务案例（已部分迁移到case_studies表）
+
+**分类枚举**：
+- `保姆`
+- `育儿嫂`
+- `老年护理`
+- `医院护工`
+
+**索引**：
+- (content_type, category, created_at)
+- (is_featured, display_order)
+
+---
+
+#### 3. case_studies表 - 案例展示 ✅
+
+| 字段名 | 类型 | 说明 | 必填 | 默认值 |
+|--------|------|------|------|--------|
+| id | uuid | 主键 | ✅ | gen_random_uuid() |
+| created_at | timestamp | 创建时间 | ✅ | now() |
+| title | varchar | 案例标题 | ✅ | - |
+| description | text | 案例描述 | ✅ | - |
+| service_type | varchar | 服务类型 | ✅ | - |
+| location | varchar | 服务地点 | ❌ | - |
+| screenshots | jsonb | 案例截图数组 | ❌ | '[]' |
+| is_active | boolean | 是否激活 | ❌ | true |
+| display_order | integer | 显示顺序 | ❌ | 0 |
+
+**screenshots字段格式**：
+```json
+[
+  {
+    "url": "https://xxx.supabase.co/storage/...",
+    "alt": "图片描述",
+    "caption": "图片说明"
+  }
+]
 ```
 
-#### 2. posts表 - 服务内容（预留）
+**索引**：
+- (is_active, service_type, display_order)
 
-| 字段名 | 类型 | 说明 |
-|--------|------|------|
-| id | uuid | 主键 |
-| title | varchar | 标题 |
-| content | text | 内容 |
-| category | varchar | 分类 |
-| image_url | varchar | 图片URL |
-| created_at | timestamp | 创建时间 |
+---
 
-#### 3. team_members表 - 服务人员（预留）
+#### 4. team_members表 - 团队成员 ✅
 
-| 字段名 | 类型 | 说明 |
-|--------|------|------|
-| id | uuid | 主键 |
-| name | varchar | 姓名 |
-| category | varchar | 服务类型 |
-| experience | varchar | 工作经验 |
-| skills | text[] | 技能标签 |
-| status | varchar | 状态（在岗/待岗） |
+| 字段名 | 类型 | 说明 | 必填 | 默认值 |
+|--------|------|------|------|--------|
+| id | uuid | 主键 | ✅ | gen_random_uuid() |
+| created_at | timestamp | 创建时间 | ✅ | now() |
+| name | varchar | 姓名 | ✅ | - |
+| category | varchar | 服务类型 | ✅ | - |
+| age | integer | 年龄 | ❌ | - |
+| experience | varchar | 工作经验 | ❌ | - |
+| skills | text[] | 技能标签数组 | ❌ | '{}' |
+| description | text | 个人简介 | ❌ | - |
+| avatar_url | varchar | 头像URL | ❌ | - |
+| gallery | jsonb | 作品集图片数组 | ❌ | '[]' |
+| is_featured | boolean | 是否首页展示 | ❌ | false |
+| display_order | integer | 显示顺序 | ❌ | 0 |
+| status | varchar | 状态 | ❌ | '在岗' |
+
+**status枚举**：
+- `在岗` - 当前在服务
+- `待岗` - 可预约
+- `休假` - 临时不可预约
+
+**索引**：
+- (category, display_order)
+- (is_featured, display_order)
 
 ---
 
@@ -260,20 +431,73 @@ WECHAT_WORK_WEBHOOK_URL=https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=you
 
 #### next.config.js
 ```javascript
-module.exports = {
+const nextConfig = {
+  reactStrictMode: true,
+
+  // 图片优化配置
   images: {
-    domains: ['tlxczsxuubwoeigyhmou.supabase.co'], // Supabase图片域名
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'tlxczsxuubwoeigyhmou.supabase.co',
+        pathname: '/storage/v1/object/**',
+      },
+    ],
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30天缓存
   },
+
+  // HTTP安全头配置
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'X-DNS-Prefetch-Control', value: 'on' },
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'X-XSS-Protection', value: '1; mode=block' },
+          { key: 'Referrer-Policy', value: 'origin-when-cross-origin' },
+        ],
+      },
+    ]
+  },
+
+  compress: true, // 启用Gzip压缩
 }
 ```
 
 #### next-sitemap.config.js
 ```javascript
 module.exports = {
-  siteUrl: 'https://gwjz.netlify.app',
+  siteUrl: 'https://qhdgwjz.cn',
   generateRobotsTxt: true,
+  changefreq: 'weekly',
   priority: 0.7,
-  changefreq: 'daily',
+  sitemapSize: 5000,
+
+  // 页面优先级配置
+  transform: async (config, path) => {
+    const priorities = {
+      '/': 1.0,
+      '/baomu': 0.9,
+      '/yuerso': 0.9,
+      '/laorenghuli': 0.9,
+      '/yiyuanhugong': 0.9,
+      '/contact': 0.7,
+      '/about': 0.6,
+    }
+
+    return {
+      loc: path,
+      changefreq: config.changefreq,
+      priority: priorities[path] || config.priority,
+      lastmod: new Date().toISOString(),
+    }
+  },
 }
 ```
 
@@ -448,21 +672,47 @@ document.body.style.overflow = 'unset'
 
 ## 版本历史
 
+### v1.5.0 (2025-11-11) ✨ 当前版本
+- ✅ 更新LOGO图片为高分辨率版本
+- ✅ 集成case_studies表数据到案例页面
+- ✅ 案例页面支持显示地理位置和真实案例标记
+- ✅ 添加完整的项目文档（PROJECT_SUMMARY、CHANGELOG、QUICK_REFERENCE等）
+- ✅ 优化next.config.js配置（图片优化、安全头、压缩）
+- ✅ 清理.next构建缓存，提升部署稳定性
+
+### v1.4.0 (2025-01-07)
+- ✅ 完善价格页面，添加三档服务等级
+- ✅ 添加价格对比卡片和常见问题FAQ
+- ✅ 优化团队展示页面，支持作品集查看
+- ✅ 添加PostModal和TeamMemberModal详情弹窗
+- ✅ 支持左右切换浏览内容
+
+### v1.3.0 (2025-01-06)
+- ✅ 添加科普知识页面（/kepu）
+- ✅ 添加行业资讯页面（/zixun）
+- ✅ 添加案例展示页面（/anli）
+- ✅ 添加团队风采页面（/tuanduifengcai）
+- ✅ 所有列表页面支持分类筛选和URL参数
+- ✅ 添加骨架屏loading状态
+
 ### v1.2.0 (2025-01-05)
 - ✅ 添加微信悬浮按钮和二维码弹窗
 - ✅ 修改联系页面微信号为 gwjz_qhd
 - ✅ 完善私域引流入口
+- ✅ 移除Testimonials组件
 
 ### v1.1.0 (2025-01-04)
 - ✅ 添加企业微信通知功能
 - ✅ 集成表单自动推送到企业微信群
 - ✅ 修复Supabase表结构问题
+- ✅ submissions表email字段改为可选
 
 ### v1.0.0 (2024-12-XX)
 - ✅ 网站基础功能上线
-- ✅ SEO优化完成
-- ✅ 服务页面搭建
+- ✅ SEO优化完成（meta标签、结构化数据）
+- ✅ 四大服务页面搭建（保姆、育儿嫂、老年护理、医院护工）
 - ✅ 联系表单实现
+- ✅ Supabase数据库集成
 
 ---
 

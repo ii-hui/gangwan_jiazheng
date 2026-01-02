@@ -13,14 +13,17 @@ import { PAGE_SEO, generateOrganizationSchema, generateBreadcrumbSchema } from '
 export default function Home() {
   const [posts, setPosts] = useState([])
   const [featuredMembers, setFeaturedMembers] = useState([])
+  const [featuredSeekers, setFeaturedSeekers] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeCategory, setActiveCategory] = useState('保姆')
+  const [adminClickCount, setAdminClickCount] = useState(0)
 
   const categories = ['保姆', '育儿嫂', '老年护理', '医院护工']
 
   useEffect(() => {
     fetchPosts()
     fetchFeaturedMembers()
+    fetchFeaturedSeekers()
   }, [])
 
   const fetchPosts = async () => {
@@ -57,7 +60,71 @@ export default function Home() {
     }
   }
 
+  const fetchFeaturedSeekers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('job_seekers')
+        .select('*')
+        .eq('is_featured', true)
+        .eq('is_approved', true)
+        .eq('is_active', true)
+        .order('display_order', { ascending: false })
+        .limit(12)
+
+      if (error) throw error
+
+      // 转换为TeamMemberCard期望的格式，并生成签名URL
+      const seekersFormatted = await Promise.all((data || []).map(async (seeker) => {
+        let avatarUrl = null
+        if (seeker.avatar_url) {
+          // 使用API获取签名URL
+          try {
+            console.log('原始路径:', seeker.avatar_url)
+            const res = await fetch(`/api/get-signed-url?path=${encodeURIComponent(seeker.avatar_url)}`)
+            const urlData = await res.json()
+            console.log('API响应:', urlData)
+            avatarUrl = urlData.signedUrl
+            console.log('最终URL:', avatarUrl)
+          } catch (err) {
+            console.error('获取签名URL失败:', err)
+          }
+        } else {
+          console.log('求职者无头像:', seeker.name)
+        }
+
+        return {
+          id: seeker.id,
+          name: seeker.name,
+          category: seeker.category,
+          avatar_url: avatarUrl,
+          avatar_alt: `秦皇岛${seeker.category}-${seeker.name}`,
+          status: seeker.work_status || '求职中',
+          age: seeker.age,
+          experience_years: seeker.experience,
+          highlight: seeker.description,
+          skills: seeker.skills || []
+        }
+      }))
+
+      console.log('格式化后的求职者数据:', seekersFormatted)
+      setFeaturedSeekers(seekersFormatted)
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') console.error('Error fetching featured seekers:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const filteredPosts = posts.filter((post) => post.category === activeCategory)
+
+  // 管理员入口点击处理
+  const handleAdminClick = () => {
+    const newCount = adminClickCount + 1
+    setAdminClickCount(newCount)
+    if (newCount >= 6) {
+      window.location.href = '/admin/dashboard'
+    }
+  }
 
   // 生成结构化数据
   const organizationSchema = generateOrganizationSchema()
@@ -173,16 +240,45 @@ export default function Home() {
 
 
         {/* 团队风采预览 */}
-        {featuredMembers.length > 0 && (
+        {(featuredSeekers.length > 0 || featuredMembers.length > 0) && (
           <section className="team-preview-section">
-            <div className="section-header">
-              <h2>秦皇岛优秀团队</h2>
-              <p>经验丰富、专业培训、秦皇岛本地值得信赖</p>
+            <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
+              <div>
+                <h2>秦皇岛优秀团队</h2>
+                <p>经验丰富、专业培训、秦皇岛本地值得信赖</p>
+              </div>
+              <Link href="/qiuzhi/upload" style={{ textDecoration: 'none' }}>
+                <button style={{
+                  padding: '12px 24px',
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)',
+                  transition: 'all 0.3s ease',
+                }}>
+                  📝 我要求职
+                </button>
+              </Link>
             </div>
             <div className="team-preview-grid">
+              {/* 先展示求职者 */}
+              {featuredSeekers.map((member) => (
+                <Link
+                  key={`seeker-${member.id}`}
+                  href="/qiuzhi"
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  <TeamMemberCard member={member} unoptimized={true} />
+                </Link>
+              ))}
+              {/* 再展示团队成员 */}
               {featuredMembers.map((member) => (
                 <Link
-                  key={member.id}
+                  key={`member-${member.id}`}
                   href={`/tuanduifengcai?category=${member.category}`}
                   style={{ textDecoration: 'none', color: 'inherit' }}
                 >
@@ -202,6 +298,22 @@ export default function Home() {
         <div className="contact-advantages-wrapper">
           <ContactForm />
           <AdvantageGrid />
+        </div>
+
+        {/* 隐藏的管理员入口 */}
+        <div style={{ textAlign: 'center', padding: '30px 0 20px', borderTop: '1px solid #f0f0f0', marginTop: '40px' }}>
+          <p
+            onClick={handleAdminClick}
+            style={{
+              color: '#999',
+              fontSize: '14px',
+              cursor: 'default',
+              userSelect: 'none',
+              margin: 0
+            }}
+          >
+            © 2024 秦皇岛港湾家政 版权所有
+          </p>
         </div>
       </div>
     </>

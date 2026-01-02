@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-export default function TeamMemberCard({ member, onClick }) {
+export default function TeamMemberCard({ member, onClick, unoptimized = false }) {
   return (
     <article className="team-member-card" onClick={onClick}>
       <div className="team-member-avatar">
@@ -12,6 +12,7 @@ export default function TeamMemberCard({ member, onClick }) {
             height={200}
             className="avatar-img"
             loading="lazy"
+            unoptimized={unoptimized}
           />
         ) : (
           <div className="avatar-placeholder">

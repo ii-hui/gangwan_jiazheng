@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>港湾家政 - 内容生成器 (方案1:经典左右布局)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 40px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px 32px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f7fafc;
+            padding: 0 32px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .tab {
+            padding: 16px 24px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: #718096;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+            top: 2px;
+        }
+
+        .tab:hover {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .form-panel {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+            background: #fafafa;
+        }
+
+        .preview-panel {
+            width: 500px;
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 32px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 14px;
+        }
+
+        .form-group label .required {
+            color: #e53e3e;
+            margin-left: 4px;
+        }
+
+        .form-group label .hint {
+            font-weight: 400;
+            color: #718096;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .preview-header {
+            margin-bottom: 16px;
+        }
+
+        .preview-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #a0aec0;
+            margin-bottom: 4px;
+        }
+
+        .preview-header p {
+            font-size: 13px;
+            color: #718096;
+        }
+
+        .sql-output {
+            flex: 1;
+            background: #2d3748;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .sql-keyword {
+            color: #f6ad55;
+            font-weight: 600;
+        }
+
+        .sql-string {
+            color: #68d391;
+        }
+
+        .sql-number {
+            color: #63b3ed;
+        }
+
+        .sql-comment {
+            color: #718096;
+            font-style: italic;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #4a5568;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #2d3748;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .info-box {
+            background: #edf2f7;
+            border-left: 4px solid #667eea;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .info-box h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .info-box p {
+            font-size: 13px;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .copy-success {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #48bb78;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(72, 187, 120, 0.3);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .copy-success.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 港湾家政内容生成器</h1>
+            <p>方案1：经典左右分栏布局 - 左侧填写表单，右侧实时预览SQL</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="posts">📝 科普/资讯/案例</div>
+            <div class="tab" data-tab="team">👥 团队成员</div>
+            <div class="tab" data-tab="case">📋 案例展示</div>
+        </div>
+
+        <div class="main-content">
+            <div class="form-panel">
+                <!-- Posts表单 -->
+                <div id="posts-form" class="tab-content active">
+                    <div class="info-box">
+                        <h4>📌 Posts表说明</h4>
+                        <p>用于科普知识(/kepu)、行业资讯(/zixun)、案例展示(/anli)页面。通过content_type字段区分不同类型内容。</p>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>内容类型 <span class="required">*</span></label>
+                            <select id="posts_content_type">
+                                <option value="科普">科普知识</option>
+                                <option value="资讯">行业资讯</option>
+                                <option value="案例">服务案例</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>服务分类 <span class="required">*</span></label>
+                            <select id="posts_category">
+                                <option value="保姆">保姆</option>
+                                <option value="育儿嫂">育儿嫂</option>
+                                <option value="老年护理">老年护理</option>
+                                <option value="医院护工">医院护工</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>标题 <span class="required">*</span></label>
+                        <input type="text" id="posts_title" placeholder="例如：新生儿护理的10个要点">
+                    </div>
+
+                    <div class="form-group">
+                        <label>内容 <span class="required">*</span></label>
+                        <textarea id="posts_content" placeholder="输入详细内容...支持换行"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>图片URL <span class="hint">(可选，从Supabase Storage上传后获取)</span></label>
+                        <input type="text" id="posts_image_url" placeholder="https://xxx.supabase.co/storage/v1/object/...">
+                    </div>
+
+                    <div class="form-group">
+                        <label>图片Alt文本 <span class="hint">(SEO优化，建议填写)</span></label>
+                        <input type="text" id="posts_image_alt" placeholder="例如：新生儿护理指南配图">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" id="posts_is_featured">
+                                <span>首页精选展示</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>显示顺序 <span class="hint">(数字越小越靠前)</span></label>
+                            <input type="number" id="posts_display_order" value="0" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team表单 -->
+                <div id="team-form" class="tab-content">
+                    <div class="info-box">
+                        <h4>📌 Team Members表说明</h4>
+                        <p>用于团队风采(/tuanduifengcai)页面，展示优秀服务人员信息。</p>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>姓名 <span class="required">*</span></label>
+                            <input type="text" id="team_name" placeholder="例如：王阿姨">
+                        </div>
+                        <div class="form-group">
+                            <label>服务类型 <span class="required">*</span></label>
+                            <select id="team_category">
+                                <option value="保姆">保姆</option>
+                                <option value="育儿嫂">育儿嫂</option>
+                                <option value="老年护理">老年护理</option>
+                                <option value="医院护工">医院护工</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>年龄</label>
+                            <input type="number" id="team_age" placeholder="例如：45">
+                        </div>
+                        <div class="form-group">
+                            <label>工作经验</label>
+                            <input type="text" id="team_experience" placeholder="例如：8年">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>技能标签 <span class="hint">(逗号分隔，例如：做饭,打扫,照顾老人)</span></label>
+                        <input type="text" id="team_skills" placeholder="做饭, 打扫, 照顾老人">
+                    </div>
+
+                    <div class="form-group">
+                        <label>个人简介</label>
+                        <textarea id="team_description" placeholder="输入个人简介..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>头像URL</label>
+                        <input type="text" id="team_avatar_url" placeholder="https://xxx.supabase.co/storage/v1/object/...">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>状态</label>
+                            <select id="team_status">
+                                <option value="在岗">在岗</option>
+                                <option value="待岗">待岗</option>
+                                <option value="休假">休假</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>显示顺序</label>
+                            <input type="number" id="team_display_order" value="0" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-wrapper">
+                            <input type="checkbox" id="team_is_featured">
+                            <span>首页精选展示</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Case Studies表单 -->
+                <div id="case-form" class="tab-content">
+                    <div class="info-box">
+                        <h4>📌 Case Studies表说明</h4>
+                        <p>用于案例展示(/anli)页面，展示真实服务案例，支持多图展示。</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>案例标题 <span class="required">*</span></label>
+                        <input type="text" id="case_title" placeholder="例如：海港区张女士家保姆服务案例">
+                    </div>
+
+                    <div class="form-group">
+                        <label>案例描述 <span class="required">*</span></label>
+                        <textarea id="case_description" placeholder="输入案例详细描述..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>服务类型 <span class="required">*</span></label>
+                            <select id="case_service_type">
+                                <option value="保姆">保姆</option>
+                                <option value="育儿嫂">育儿嫂</option>
+                                <option value="老年护理">老年护理</option>
+                                <option value="医院护工">医院护工</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>服务地点</label>
+                            <input type="text" id="case_location" placeholder="例如：秦皇岛海港区">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>案例图片 <span class="hint">(JSON格式，可选)</span></label>
+                        <textarea id="case_screenshots" placeholder='[{"url":"https://...", "alt":"图片描述", "caption":"图片说明"}]'></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" id="case_is_active" checked>
+                                <span>激活显示</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>显示顺序</label>
+                            <input type="number" id="case_display_order" value="0" min="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-panel">
+                <div class="preview-header">
+                    <h3>📄 SQL预览</h3>
+                    <p>在Supabase SQL Editor中执行</p>
+                </div>
+                <div class="sql-output" id="sql-output">
+-- 请填写左侧表单，SQL将自动生成
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="copySQL()">
+                        <span>📋</span>
+                        <span>复制SQL</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetForm()">
+                        <span>🔄</span>
+                        <span>重置</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="copy-success" id="copy-success">
+        <span>✅</span>
+        <span>SQL已复制到剪贴板！</span>
+    </div>
+
+    <script>
+        // 标签切换
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+
+                // 切换标签激活状态
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // 切换表单显示
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(`${tabName}-form`).classList.add('active');
+
+                // 生成SQL
+                generateSQL();
+            });
+        });
+
+        // 监听所有输入变化
+        document.querySelectorAll('input, select, textarea').forEach(input => {
+            input.addEventListener('input', generateSQL);
+            input.addEventListener('change', generateSQL);
+        });
+
+        function generateSQL() {
+            const activeTab = document.querySelector('.tab.active').dataset.tab;
+            let sql = '';
+
+            if (activeTab === 'posts') {
+                sql = generatePostsSQL();
+            } else if (activeTab === 'team') {
+                sql = generateTeamSQL();
+            } else if (activeTab === 'case') {
+                sql = generateCaseSQL();
+            }
+
+            document.getElementById('sql-output').innerHTML = highlightSQL(sql);
+        }
+
+        function generatePostsSQL() {
+            const contentType = document.getElementById('posts_content_type').value;
+            const category = document.getElementById('posts_category').value;
+            const title = document.getElementById('posts_title').value;
+            const content = document.getElementById('posts_content').value;
+            const imageUrl = document.getElementById('posts_image_url').value;
+            const imageAlt = document.getElementById('posts_image_alt').value;
+            const isFeatured = document.getElementById('posts_is_featured').checked;
+            const displayOrder = document.getElementById('posts_display_order').value;
+
+            if (!title || !content) {
+                return '-- ⚠️ 请填写必填字段：标题、内容';
+            }
+
+            return `-- 插入${contentType}内容到posts表
+INSERT INTO posts (
+    title,
+    content,
+    category,
+    content_type,
+    image_url,
+    image_alt,
+    is_featured,
+    display_order,
+    created_at
+) VALUES (
+    '${escapeSQL(title)}',
+    '${escapeSQL(content)}',
+    '${category}',
+    '${contentType}',
+    ${imageUrl ? `'${escapeSQL(imageUrl)}'` : 'NULL'},
+    ${imageAlt ? `'${escapeSQL(imageAlt)}'` : 'NULL'},
+    ${isFeatured},
+    ${displayOrder},
+    NOW()
+);
+
+-- 提示：执行后可在 ${contentType === '科普' ? '/kepu' : contentType === '资讯' ? '/zixun' : '/anli'} 页面查看`;
+        }
+
+        function generateTeamSQL() {
+            const name = document.getElementById('team_name').value;
+            const category = document.getElementById('team_category').value;
+            const age = document.getElementById('team_age').value;
+            const experience = document.getElementById('team_experience').value;
+            const skills = document.getElementById('team_skills').value;
+            const description = document.getElementById('team_description').value;
+            const avatarUrl = document.getElementById('team_avatar_url').value;
+            const status = document.getElementById('team_status').value;
+            const displayOrder = document.getElementById('team_display_order').value;
+            const isFeatured = document.getElementById('team_is_featured').checked;
+
+            if (!name) {
+                return '-- ⚠️ 请填写必填字段：姓名';
+            }
+
+            const skillsArray = skills ? skills.split(',').map(s => `'${s.trim()}'`).join(', ') : '';
+
+            return `-- 插入团队成员到team_members表
+INSERT INTO team_members (
+    name,
+    category,
+    age,
+    experience,
+    skills,
+    description,
+    avatar_url,
+    status,
+    display_order,
+    is_featured,
+    created_at
+) VALUES (
+    '${escapeSQL(name)}',
+    '${category}',
+    ${age || 'NULL'},
+    ${experience ? `'${escapeSQL(experience)}'` : 'NULL'},
+    ${skillsArray ? `ARRAY[${skillsArray}]` : 'ARRAY[]::text[]'},
+    ${description ? `'${escapeSQL(description)}'` : 'NULL'},
+    ${avatarUrl ? `'${escapeSQL(avatarUrl)}'` : 'NULL'},
+    '${status}',
+    ${displayOrder},
+    ${isFeatured},
+    NOW()
+);
+
+-- 提示：执行后可在 /tuanduifengcai 页面查看`;
+        }
+
+        function generateCaseSQL() {
+            const title = document.getElementById('case_title').value;
+            const description = document.getElementById('case_description').value;
+            const serviceType = document.getElementById('case_service_type').value;
+            const location = document.getElementById('case_location').value;
+            const screenshots = document.getElementById('case_screenshots').value;
+            const isActive = document.getElementById('case_is_active').checked;
+            const displayOrder = document.getElementById('case_display_order').value;
+
+            if (!title || !description) {
+                return '-- ⚠️ 请填写必填字段：案例标题、案例描述';
+            }
+
+            let screenshotsValue = 'NULL';
+            if (screenshots) {
+                try {
+                    JSON.parse(screenshots); // 验证JSON格式
+                    screenshotsValue = `'${screenshots}'::jsonb`;
+                } catch (e) {
+                    return '-- ⚠️ 案例图片JSON格式错误，请检查';
+                }
+            }
+
+            return `-- 插入案例到case_studies表
+INSERT INTO case_studies (
+    title,
+    description,
+    service_type,
+    location,
+    screenshots,
+    is_active,
+    display_order,
+    created_at
+) VALUES (
+    '${escapeSQL(title)}',
+    '${escapeSQL(description)}',
+    '${serviceType}',
+    ${location ? `'${escapeSQL(location)}'` : 'NULL'},
+    ${screenshotsValue},
+    ${isActive},
+    ${displayOrder},
+    NOW()
+);
+
+-- 提示：执行后可在 /anli 页面查看`;
+        }
+
+        function escapeSQL(str) {
+            return str.replace(/'/g, "''").replace(/\n/g, '\\n');
+        }
+
+        function highlightSQL(sql) {
+            return sql
+                .replace(/(INSERT INTO|VALUES|SELECT|FROM|WHERE|AND|OR|NULL|NOW\(\)|ARRAY)/g, '<span class="sql-keyword">$1</span>')
+                .replace(/'([^']*)'/g, '<span class="sql-string">\'$1\'</span>')
+                .replace(/\b(\d+)\b/g, '<span class="sql-number">$1</span>')
+                .replace(/(--[^\n]*)/g, '<span class="sql-comment">$1</span>');
+        }
+
+        function copySQL() {
+            const sqlText = document.getElementById('sql-output').innerText;
+            navigator.clipboard.writeText(sqlText).then(() => {
+                const successMsg = document.getElementById('copy-success');
+                successMsg.classList.add('show');
+                setTimeout(() => {
+                    successMsg.classList.remove('show');
+                }, 3000);
+            });
+        }
+
+        function resetForm() {
+            const activeTab = document.querySelector('.tab.active').dataset.tab;
+            document.getElementById(`${activeTab}-form`).querySelectorAll('input, select, textarea').forEach(input => {
+                if (input.type === 'checkbox') {
+                    input.checked = input.id.includes('is_active');
+                } else if (input.type === 'number') {
+                    input.value = 0;
+                } else {
+                    input.value = '';
+                }
+            });
+            generateSQL();
+        }
+
+        // 初始生成
+        generateSQL();
+    </script>
+</body>
+</html>

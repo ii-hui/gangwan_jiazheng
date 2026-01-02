@@ -1,6 +1,7 @@
 # 港湾家政 - 快速参考手册
 
 > 快速查找代码位置和使用方法
+> 最后更新：2025-11-11
 
 ---
 
@@ -9,64 +10,200 @@
 ### 组件文件
 ```
 components/
-├── Layout.js           # 全局布局（导航+底部按钮）
-├── Navbar.js           # 顶部导航栏
-├── SEOHead.js          # SEO头部组件
-├── Hero.js             # 页面头图
-├── ContactForm.js      # 联系表单（含企业微信通知）
-├── WeChatFloating.js   # 微信悬浮按钮 ⭐新增
-├── AdvantageGrid.js    # 优势展示网格
-└── ServiceCard.js      # 服务卡片
+├── Layout.js              # 全局布局（导航+底部+微信浮窗）
+├── Navbar.js              # 顶部导航栏（响应式菜单）
+├── SEOHead.js             # SEO头部组件
+├── Hero.js                # 页面头图（可选Logo和CTA）
+├── ContactForm.js         # 联系表单（Supabase+企业微信）
+├── WeChatFloating.js      # 微信悬浮按钮+二维码弹窗
+├── AdvantageGrid.js       # 优势展示网格
+├── ServiceCard.js         # 服务卡片
+├── TeamMemberCard.js      # 团队成员卡片
+├── TeamMemberModal.js     # 成员详情弹窗（支持左右切换）
+├── PostModal.js           # 内容详情弹窗（支持左右切换）
+├── SkeletonCard.js        # Loading骨架屏
+├── RelatedServices.js     # 相关服务推荐
+└── RecommendedTeam.js     # 推荐团队成员
 ```
 
 ### 页面文件
 ```
 pages/
-├── index.js            # 首页
-├── baomu.js            # 保姆服务
-├── yuerso.js           # 育儿嫂服务
-├── laorenghuli.js      # 老年护理
-├── yiyuanhugong.js     # 医院护工
-├── about.js            # 关于我们
-├── contact.js          # 联系我们
+├── index.js               # 首页（动态内容+团队预览）
+├── baomu.js               # 保姆服务详情页
+├── yuerso.js              # 育儿嫂服务详情页
+├── laorenghuli.js         # 老年护理详情页
+├── yiyuanhugong.js        # 医院护工详情页
+├── kepu.js                # 科普知识列表页（支持分类筛选）
+├── zixun.js               # 行业资讯列表页（支持分类筛选）
+├── anli.js                # 案例展示列表页（posts+case_studies）
+├── tuanduifengcai.js      # 团队风采展示页（支持分类筛选）
+├── price.js               # 价格表页面（三档服务等级）
+├── about.js               # 关于我们
+├── contact.js             # 联系我们+表单
+├── 404.js                 # 404错误页
 └── api/
-    └── wechat-notify.js  # 企业微信通知API ⭐新增
+    └── wechat-notify.js   # 企业微信通知API
 ```
 
 ### 配置与工具
 ```
-utils/seoData.js        # SEO配置中心
-lib/supabaseClient.js   # Supabase客户端
-styles/globals.css      # 全局样式
-.env.local              # 环境变量（勿提交）
+utils/seoData.js           # SEO配置中心（PAGE_SEO、SERVICE_CONTENT、Schema生成）
+lib/supabaseClient.js      # Supabase客户端配置
+styles/globals.css         # 全局样式（3000+行）
+next.config.js             # Next.js配置（图片优化、安全头、压缩）
+next-sitemap.config.js     # Sitemap配置（优先级、频率）
+.env.local                 # 环境变量（勿提交）
 ```
 
 ---
 
 ## 🔧 常用代码片段
 
-### 1. 添加新的服务页面
+### 1. 添加新的列表页面（科普/资讯/案例）
 
 ```javascript
-// pages/new-service.js
+// pages/new-content.js
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { supabase } from '../lib/supabaseClient'
 import SEOHead from '../components/SEOHead'
 import Hero from '../components/Hero'
-import ContactForm from '../components/ContactForm'
-import { PAGE_SEO, SERVICE_CONTENT } from '../utils/seoData'
+import Image from 'next/image'
+import PostModal from '../components/PostModal'
+import SkeletonCard from '../components/SkeletonCard'
 
-export default function NewServicePage() {
+export default function NewContentPage() {
+  const router = useRouter()
+  const [posts, setPosts] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState('全部')
+  const [selectedPostIndex, setSelectedPostIndex] = useState(null)
+
+  const categories = ['全部', '保姆', '育儿嫂', '老年护理', '医院护工']
+
+  useEffect(() => {
+    if (router.isReady) {
+      const { category } = router.query
+      if (category && categories.includes(category)) {
+        setSelectedCategory(category)
+      }
+    }
+  }, [router.isReady, router.query])
+
+  useEffect(() => {
+    fetchPosts()
+  }, [selectedCategory])
+
+  const fetchPosts = async () => {
+    try {
+      setLoading(true)
+      let query = supabase
+        .from('posts')
+        .select('*')
+        .eq('content_type', '新类型')
+        .order('created_at', { ascending: false })
+
+      if (selectedCategory !== '全部') {
+        query = query.eq('category', selectedCategory)
+      }
+
+      const { data, error } = await query
+      if (error) throw error
+      setPosts(data || [])
+    } catch (error) {
+      console.error('Error:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category)
+    router.push(
+      category === '全部' ? '/new-content' : `/new-content?category=${category}`,
+      undefined,
+      { shallow: true }
+    )
+  }
+
   return (
     <>
       <SEOHead
-        title="新服务 - 秦皇岛港湾家政"
-        description="服务描述..."
-        keywords="秦皇岛,新服务"
+        title="新内容 - 秦皇岛港湾家政"
+        description="描述..."
+        keywords="关键词"
+        canonical="/new-content"
       />
-      <Hero title="新服务" subtitle="服务副标题" />
+      <Hero title="新内容标题" subtitle="副标题" />
+
       <div className="main-container">
-        {/* 服务内容 */}
-        <ContactForm />
+        {/* 分类筛选 */}
+        <div className="category-filter">
+          <h2>按服务类型筛选</h2>
+          <div className="filter-buttons">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => handleCategoryChange(cat)}
+                className={`filter-btn ${selectedCategory === cat ? 'active' : ''}`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 内容展示 */}
+        {loading ? (
+          <div className="posts-grid">
+            {[...Array(6)].map((_, index) => (
+              <SkeletonCard key={index} />
+            ))}
+          </div>
+        ) : posts.length === 0 ? (
+          <div className="empty-state">
+            <p>暂无内容</p>
+          </div>
+        ) : (
+          <div className="posts-grid">
+            {posts.map((post, index) => (
+              <article
+                key={post.id}
+                className="post-card clickable"
+                onClick={() => setSelectedPostIndex(index)}
+              >
+                {post.image_url && (
+                  <Image
+                    src={post.image_url}
+                    alt={post.image_alt || post.title}
+                    width={400}
+                    height={200}
+                    className="post-image"
+                    loading="lazy"
+                  />
+                )}
+                <div className="post-content">
+                  <span className="post-category-tag">{post.category}</span>
+                  <h3>{post.title}</h3>
+                  <p>{post.content.substring(0, 150)}...</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </div>
+
+      {/* 模态框 */}
+      {selectedPostIndex !== null && (
+        <PostModal
+          posts={posts}
+          currentIndex={selectedPostIndex}
+          onClose={() => setSelectedPostIndex(null)}
+          onNext={() => setSelectedPostIndex((prev) => (prev + 1) % posts.length)}
+          onPrev={() => setSelectedPostIndex((prev) => (prev - 1 + posts.length) % posts.length)}
+        />
+      )}
     </>
   )
 }
@@ -80,29 +217,65 @@ const response = await fetch('/api/wechat-notify', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
-    name: '客户姓名',
+    name: '在线咨询',
     phone: '13800138000',
     category: '保姆',
-    message: '咨询信息'
+    message: '咨询保姆服务'
   })
 })
+
+const result = await response.json()
+if (result.success) {
+  console.log('通知发送成功')
+}
 ```
 
-### 3. 查询Supabase数据
+### 3. Supabase数据查询模式
 
 ```javascript
 import { supabase } from '../lib/supabaseClient'
 
-// 查询所有提交
+// 基础查询
 const { data, error } = await supabase
-  .from('submissions')
+  .from('posts')
   .select('*')
+  .eq('category', '保姆')
   .order('created_at', { ascending: false })
+
+// 条件查询
+let query = supabase.from('posts').select('*')
+if (category !== '全部') {
+  query = query.eq('category', category)
+}
+const { data } = await query
 
 // 插入数据
 const { error } = await supabase
   .from('submissions')
-  .insert([{ name: 'xxx', phone: 'xxx' }])
+  .insert([{
+    name: '张三',
+    phone: '13800138000',
+    category: '保姆',
+    message: '咨询服务'
+  }])
+
+// 更新数据
+const { error } = await supabase
+  .from('team_members')
+  .update({ status: '在岗' })
+  .eq('id', memberId)
+
+// 删除数据
+const { error } = await supabase
+  .from('posts')
+  .delete()
+  .eq('id', postId)
+
+// 并行查询多个表
+const [postsResult, membersResult] = await Promise.all([
+  supabase.from('posts').select('*').eq('is_featured', true),
+  supabase.from('team_members').select('*').eq('is_featured', true)
+])
 ```
 
 ---
@@ -338,4 +511,4 @@ npm run dev
 
 **文档用途**: 日常开发快速查找
 **维护建议**: 发现新的常用操作及时补充
-**最后更新**: 2025-01-05
+**最后更新**: 2025-11-11

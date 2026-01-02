@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>港湾家政 - 内容生成器 (方案2:卡片向导式)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: #f0f4f8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #718096;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 24px;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        .step.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .step.active .step-number {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .step-label {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .type-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .type-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+        }
+
+        .type-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+        }
+
+        .type-card-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .type-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .type-card-desc {
+            font-size: 13px;
+            color: #718096;
+            line-height: 1.5;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .form-card-header {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .form-card-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .form-card-header p {
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 14px;
+        }
+
+        .form-group label .required {
+            color: #e53e3e;
+            margin-left: 4px;
+        }
+
+        .form-group label .hint {
+            font-weight: 400;
+            color: #a0aec0;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: inherit;
+            background: #fafafa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 12px 16px;
+            background: #f7fafc;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .form-group .checkbox-label:hover {
+            background: #edf2f7;
+        }
+
+        .form-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .result-card {
+            background: #1a202c;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .result-header h3 {
+            color: #e2e8f0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .sql-output {
+            background: #2d3748;
+            border-radius: 12px;
+            padding: 24px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #e2e8f0;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .sql-keyword {
+            color: #f6ad55;
+            font-weight: 600;
+        }
+
+        .sql-string {
+            color: #68d391;
+        }
+
+        .sql-number {
+            color: #63b3ed;
+        }
+
+        .sql-comment {
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+        .action-bar {
+            position: sticky;
+            bottom: 20px;
+            background: white;
+            border-radius: 16px;
+            padding: 20px 32px;
+            box-shadow: 0 -4px 32px rgba(0,0,0,0.12);
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #48bb78;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(72, 187, 120, 0.3);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .progress-indicator {
+            font-size: 13px;
+            color: #718096;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #edf2f7;
+            color: #4a5568;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .tag.required {
+            background: #fed7d7;
+            color: #c53030;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 港湾家政内容生成器</h1>
+            <p>方案2：卡片向导式布局 - 三步完成内容创建</p>
+        </div>
+
+        <div class="steps">
+            <div class="step active" data-step="1">
+                <div class="step-number">1</div>
+                <div class="step-label">选择类型</div>
+            </div>
+            <div class="step" data-step="2">
+                <div class="step-number">2</div>
+                <div class="step-label">填写内容</div>
+            </div>
+            <div class="step" data-step="3">
+                <div class="step-number">3</div>
+                <div class="step-label">生成SQL</div>
+            </div>
+        </div>
+
+        <div class="progress-indicator">
+            <span id="progress-text">第 1 步，共 3 步</span>
+        </div>
+
+        <!-- 步骤1: 选择类型 -->
+        <div id="step-1" class="step-content active">
+            <div class="card-grid">
+                <div class="type-card" data-type="posts">
+                    <div class="type-card-icon">📝</div>
+                    <div class="type-card-title">科普/资讯/案例</div>
+                    <div class="type-card-desc">发布家政知识科普、行业资讯或服务案例</div>
+                </div>
+                <div class="type-card" data-type="team">
+                    <div class="type-card-icon">👥</div>
+                    <div class="type-card-title">团队成员</div>
+                    <div class="type-card-desc">添加优秀服务人员到团队展示页面</div>
+                </div>
+                <div class="type-card" data-type="case">
+                    <div class="type-card-icon">📋</div>
+                    <div class="type-card-title">案例展示</div>
+                    <div class="type-card-desc">发布真实服务案例，支持多图展示</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤2: 填写内容 -->
+        <div id="step-2" class="step-content">
+            <!-- Posts表单 -->
+            <div id="posts-form-2" class="form-card" style="display:none;">
+                <div class="form-card-header">
+                    <h2>📝 科普/资讯/案例内容</h2>
+                    <p>填写以下信息以发布新内容到网站</p>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <span>📌</span>
+                        <span>基本信息</span>
+                        <span class="tag required">必填</span>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>内容类型 <span class="required">*</span></label>
+                            <select id="posts_content_type_2">
+                                <option value="科普">科普知识</option>
+                                <option value="资讯">行业资讯</option>
+                                <option value="案例">服务案例</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>服务分类 <span class="required">*</span></label>
+                            <select id="posts_category_2">
+                                <option value="保姆">保姆</option>
+                                <option value="育儿嫂">育儿嫂</option>
+                                <option value="老年护理">老年护理</option>
+                                <option value="医院护工">医院护工</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>标题 <span class="required">*</span></label>
+                        <input type="text" id="posts_title_2" placeholder="输入吸引人的标题，例如：新生儿护理的10个要点">
+                    </div>
+                    <div class="form-group">
+                        <label>内容 <span class="required">*</span></label>
+                        <textarea id="posts_content_2" placeholder="输入详细内容，支持多行文本..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <span>🖼️</span>
+                        <span>图片设置</span>
+                        <span class="tag">可选</span>
+                    </div>
+                    <div class="form-group">
+                        <label>图片URL <span class="hint">(从Supabase Storage上传)</span></label>
+                        <input type="text" id="posts_image_url_2" placeholder="https://xxx.supabase.co/storage/v1/object/...">
+                    </div>
+                    <div class="form-group">
+                        <label>图片Alt文本 <span class="hint">(SEO优化)</span></label>
+                        <input type="text" id="posts_image_alt_2" placeholder="例如：新生儿护理指南配图">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <span>⚙️</span>
+                        <span>高级选项</span>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="posts_is_featured_2">
+                                <span>在首页精选区域展示</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>显示顺序 <span class="hint">(数字越小越靠前)</span></label>
+                            <input type="number" id="posts_display_order_2" value="0" min="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team表单 -->
+            <div id="team-form-2" class="form-card" style="display:none;">
+                <div class="form-card-header">
+                    <h2>👥 团队成员信息</h2>
+                    <p>添加优秀服务人员到团队展示页面</p>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <span>📌</span>
+                        <span>基本信息</span>
+                        <span class="tag required">必填</span>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>姓名 <span class="required">*</span></label>
+                            <input type="text" id="team_name_2" placeholder="例如：王阿姨">
+                        </div>
+                        <div class="form-group">
+                            <label>服务类型 <span class="required">*</span></label>
+                            <select id="team_category_2">
+                                <option value="保姆">保姆</option>
+                                <option value="育儿嫂">育儿嫂</option>
+                                <option value="老年护理">老年护理</option>
+                                <option value="医院护工">医院护工</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>年龄</label>
+                            <input type="number" id="team_age_2" placeholder="例如：45">
+                        </div>
+                        <div class="form-group">
+                            <label>工作经验</label>
+                            <input type="text" id="team_experience_2" placeholder="例如：8年">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <span>💼</span>
+                        <span>技能与简介</span>
+                    </div>
+                    <div class="form-group">
+                        <label>技能标签 <span class="hint">(逗号分隔)</span></label>
+                        <input type="text" id="team_skills_2" placeholder="例如：做饭, 打扫, 照顾老人, 育儿经验丰富">
+                    </div>
+                    <div class="form-group">
+                        <label>个人简介</label>
+                        <textarea id="team_description_2" placeholder="介绍工作经历、擅长领域、服务案例等..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <span>⚙️</span>
+                        <span>其他设置</span>
+                    </div>
+                    <div class="form-group">
+                        <label>头像URL</label>
+                        <input type="text" id="team_avatar_url_2" placeholder="https://xxx.supabase.co/storage/v1/object/...">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>工作状态</label>
+                            <select id="team_status_2">
+                                <option value="在岗">在岗</option>
+                                <option value="待岗">待岗</option>
+                                <option value="休假">休假</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>显示顺序</label>
+                            <input type="number" id="team_display_order_2" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="team_is_featured_2">
+                            <span>在首页精选区域展示</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Case Studies表单 -->
+            <div id="case-form-2" class="form-card" style="display:none;">
+                <div class="form-card-header">
+                    <h2>📋 服务案例详情</h2>
+                    <p>发布真实服务案例，展示服务成果</p>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <span>📌</span>
+                        <span>案例信息</span>
+                        <span class="tag required">必填</span>
+                    </div>
+                    <div class="form-group">
+                        <label>案例标题 <span class="required">*</span></label>
+                        <input type="text" id="case_title_2" placeholder="例如：海港区张女士家保姆服务案例">
+                    </div>
+                    <div class="form-group">
+                        <label>案例描述 <span class="required">*</span></label>
+                        <textarea id="case_description_2" placeholder="详细描述服务过程、服务效果、客户反馈等..."></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>服务类型 <span class="required">*</span></label>
+                            <select id="case_service_type_2">
+                                <option value="保姆">保姆</option>
+                                <option value="育儿嫂">育儿嫂</option>
+                                <option value="老年护理">老年护理</option>
+                                <option value="医院护工">医院护工</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>服务地点</label>
+                            <input type="text" id="case_location_2" placeholder="例如：秦皇岛海港区">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <span>🖼️</span>
+                        <span>案例图片</span>
+                        <span class="tag">可选</span>
+                    </div>
+                    <div class="form-group">
+                        <label>图片JSON数据 <span class="hint">(数组格式)</span></label>
+                        <textarea id="case_screenshots_2" placeholder='[{"url":"https://...", "alt":"图片描述", "caption":"图片说明"}]'></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <span>⚙️</span>
+                        <span>显示设置</span>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="case_is_active_2" checked>
+                                <span>激活并显示在网站上</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>显示顺序</label>
+                            <input type="number" id="case_display_order_2" value="0" min="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 步骤3: 生成SQL -->
+        <div id="step-3" class="step-content">
+            <div class="result-card">
+                <div class="result-header">
+                    <h3>✅ SQL语句已生成</h3>
+                </div>
+                <div class="sql-output" id="sql-output-2">
+-- SQL将在这里显示
+                </div>
+            </div>
+        </div>
+
+        <!-- 固定底部操作栏 -->
+        <div class="action-bar">
+            <button class="btn btn-secondary" id="prev-btn" onclick="previousStep()" style="display:none;">
+                <span>◀</span>
+                <span>上一步</span>
+            </button>
+            <button class="btn btn-primary" id="next-btn" onclick="nextStep()">
+                <span>下一步</span>
+                <span>▶</span>
+            </button>
+            <button class="btn btn-primary" id="copy-btn" onclick="copySQL()" style="display:none;">
+                <span>📋</span>
+                <span>复制SQL</span>
+            </button>
+            <button class="btn btn-secondary" onclick="resetAll()">
+                <span>🔄</span>
+                <span>重新开始</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <span>✅</span>
+        <span>SQL已复制到剪贴板！</span>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let selectedType = '';
+
+        // 选择类型
+        document.querySelectorAll('.type-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedType = card.dataset.type;
+            });
+        });
+
+        // 步骤切换
+        function nextStep() {
+            if (currentStep === 1) {
+                if (!selectedType) {
+                    alert('请先选择内容类型');
+                    return;
+                }
+                showFormForType(selectedType);
+                currentStep = 2;
+            } else if (currentStep === 2) {
+                if (!validateForm()) {
+                    return;
+                }
+                generateSQL();
+                currentStep = 3;
+            }
+            updateStepUI();
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepUI();
+            }
+        }
+
+        function updateStepUI() {
+            // 更新步骤指示器
+            document.querySelectorAll('.step').forEach((step, index) => {
+                step.classList.toggle('active', index + 1 <= currentStep);
+            });
+
+            // 更新内容显示
+            document.querySelectorAll('.step-content').forEach((content, index) => {
+                content.classList.toggle('active', index + 1 === currentStep);
+            });
+
+            // 更新按钮
+            document.getElementById('prev-btn').style.display = currentStep > 1 ? 'flex' : 'none';
+            document.getElementById('next-btn').style.display = currentStep < 3 ? 'flex' : 'none';
+            document.getElementById('copy-btn').style.display = currentStep === 3 ? 'flex' : 'none';
+
+            // 更新进度文本
+            document.getElementById('progress-text').textContent = `第 ${currentStep} 步，共 3 步`;
+        }
+
+        function showFormForType(type) {
+            document.querySelectorAll('.form-card').forEach(form => form.style.display = 'none');
+            document.getElementById(`${type}-form-2`).style.display = 'block';
+        }
+
+        function validateForm() {
+            if (selectedType === 'posts') {
+                const title = document.getElementById('posts_title_2').value;
+                const content = document.getElementById('posts_content_2').value;
+                if (!title || !content) {
+                    alert('请填写标题和内容');
+                    return false;
+                }
+            } else if (selectedType === 'team') {
+                const name = document.getElementById('team_name_2').value;
+                if (!name) {
+                    alert('请填写姓名');
+                    return false;
+                }
+            } else if (selectedType === 'case') {
+                const title = document.getElementById('case_title_2').value;
+                const description = document.getElementById('case_description_2').value;
+                if (!title || !description) {
+                    alert('请填写案例标题和描述');
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function generateSQL() {
+            let sql = '';
+            if (selectedType === 'posts') {
+                sql = generatePostsSQL2();
+            } else if (selectedType === 'team') {
+                sql = generateTeamSQL2();
+            } else if (selectedType === 'case') {
+                sql = generateCaseSQL2();
+            }
+            document.getElementById('sql-output-2').innerHTML = highlightSQL(sql);
+        }
+
+        function generatePostsSQL2() {
+            const contentType = document.getElementById('posts_content_type_2').value;
+            const category = document.getElementById('posts_category_2').value;
+            const title = document.getElementById('posts_title_2').value;
+            const content = document.getElementById('posts_content_2').value;
+            const imageUrl = document.getElementById('posts_image_url_2').value;
+            const imageAlt = document.getElementById('posts_image_alt_2').value;
+            const isFeatured = document.getElementById('posts_is_featured_2').checked;
+            const displayOrder = document.getElementById('posts_display_order_2').value;
+
+            return `-- 插入${contentType}内容到posts表
+INSERT INTO posts (
+    title,
+    content,
+    category,
+    content_type,
+    image_url,
+    image_alt,
+    is_featured,
+    display_order,
+    created_at
+) VALUES (
+    '${escapeSQL(title)}',
+    '${escapeSQL(content)}',
+    '${category}',
+    '${contentType}',
+    ${imageUrl ? `'${escapeSQL(imageUrl)}'` : 'NULL'},
+    ${imageAlt ? `'${escapeSQL(imageAlt)}'` : 'NULL'},
+    ${isFeatured},
+    ${displayOrder},
+    NOW()
+);
+
+-- 提示：执行后可在 ${contentType === '科普' ? '/kepu' : contentType === '资讯' ? '/zixun' : '/anli'} 页面查看`;
+        }
+
+        function generateTeamSQL2() {
+            const name = document.getElementById('team_name_2').value;
+            const category = document.getElementById('team_category_2').value;
+            const age = document.getElementById('team_age_2').value;
+            const experience = document.getElementById('team_experience_2').value;
+            const skills = document.getElementById('team_skills_2').value;
+            const description = document.getElementById('team_description_2').value;
+            const avatarUrl = document.getElementById('team_avatar_url_2').value;
+            const status = document.getElementById('team_status_2').value;
+            const displayOrder = document.getElementById('team_display_order_2').value;
+            const isFeatured = document.getElementById('team_is_featured_2').checked;
+
+            const skillsArray = skills ? skills.split(',').map(s => `'${s.trim()}'`).join(', ') : '';
+
+            return `-- 插入团队成员到team_members表
+INSERT INTO team_members (
+    name,
+    category,
+    age,
+    experience,
+    skills,
+    description,
+    avatar_url,
+    status,
+    display_order,
+    is_featured,
+    created_at
+) VALUES (
+    '${escapeSQL(name)}',
+    '${category}',
+    ${age || 'NULL'},
+    ${experience ? `'${escapeSQL(experience)}'` : 'NULL'},
+    ${skillsArray ? `ARRAY[${skillsArray}]` : 'ARRAY[]::text[]'},
+    ${description ? `'${escapeSQL(description)}'` : 'NULL'},
+    ${avatarUrl ? `'${escapeSQL(avatarUrl)}'` : 'NULL'},
+    '${status}',
+    ${displayOrder},
+    ${isFeatured},
+    NOW()
+);
+
+-- 提示：执行后可在 /tuanduifengcai 页面查看`;
+        }
+
+        function generateCaseSQL2() {
+            const title = document.getElementById('case_title_2').value;
+            const description = document.getElementById('case_description_2').value;
+            const serviceType = document.getElementById('case_service_type_2').value;
+            const location = document.getElementById('case_location_2').value;
+            const screenshots = document.getElementById('case_screenshots_2').value;
+            const isActive = document.getElementById('case_is_active_2').checked;
+            const displayOrder = document.getElementById('case_display_order_2').value;
+
+            let screenshotsValue = 'NULL';
+            if (screenshots) {
+                try {
+                    JSON.parse(screenshots);
+                    screenshotsValue = `'${screenshots}'::jsonb`;
+                } catch (e) {
+                    return '-- ⚠️ 案例图片JSON格式错误';
+                }
+            }
+
+            return `-- 插入案例到case_studies表
+INSERT INTO case_studies (
+    title,
+    description,
+    service_type,
+    location,
+    screenshots,
+    is_active,
+    display_order,
+    created_at
+) VALUES (
+    '${escapeSQL(title)}',
+    '${escapeSQL(description)}',
+    '${serviceType}',
+    ${location ? `'${escapeSQL(location)}'` : 'NULL'},
+    ${screenshotsValue},
+    ${isActive},
+    ${displayOrder},
+    NOW()
+);
+
+-- 提示：执行后可在 /anli 页面查看`;
+        }
+
+        function escapeSQL(str) {
+            return str.replace(/'/g, "''").replace(/\n/g, '\\n');
+        }
+
+        function highlightSQL(sql) {
+            return sql
+                .replace(/(INSERT INTO|VALUES|SELECT|FROM|WHERE|AND|OR|NULL|NOW\(\)|ARRAY)/g, '<span class="sql-keyword">$1</span>')
+                .replace(/'([^']*)'/g, '<span class="sql-string">\'$1\'</span>')
+                .replace(/\b(\d+)\b/g, '<span class="sql-number">$1</span>')
+                .replace(/(--[^\n]*)/g, '<span class="sql-comment">$1</span>');
+        }
+
+        function copySQL() {
+            const sqlText = document.getElementById('sql-output-2').innerText;
+            navigator.clipboard.writeText(sqlText).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            });
+        }
+
+        function resetAll() {
+            currentStep = 1;
+            selectedType = '';
+            document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('input, select, textarea').forEach(input => {
+                if (input.type === 'checkbox') {
+                    input.checked = input.id.includes('is_active');
+                } else if (input.type === 'number') {
+                    input.value = 0;
+                } else {
+                    input.value = '';
+                }
+            });
+            updateStepUI();
+        }
+
+        // 初始化
+        updateStepUI();
+    </script>
+</body>
+</html>
